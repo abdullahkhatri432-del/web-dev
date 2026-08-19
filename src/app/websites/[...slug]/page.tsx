@@ -150,6 +150,10 @@ export default function WebsiteDetailPage() {
                   Get this website
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
+                <Button size="lg" variant="outline" onClick={() => router.push(`/demo?demoId=${demo.id}`)}>
+                  <Eye className="mr-2 h-4 w-4" />
+                  3D preview
+                </Button>
                 {demo.livePreviewUrl && (
                   <Button
                     size="lg"

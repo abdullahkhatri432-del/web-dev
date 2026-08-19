@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth"
 
 const links = [
   { href: "/websites", label: "Websites" },
+  { href: "/demo", label: "3D demo" },
   { href: "/#how-it-works", label: "How it works" },
   { href: "/#packages", label: "Packages" },
   { href: "/about", label: "About" },
