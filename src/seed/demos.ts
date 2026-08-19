@@ -1,4 +1,4 @@
-import { Demo } from "@/src/services/firestore"
+import type { Demo } from "@/services/firestore"
 
 export const demoCategories = [
   { id: "restaurant", name: "Restaurant", slug: "restaurant" },

@@ -1,9 +1,12 @@
 "use client"
 
-import { useState } from "react"
-import { getDemos, getPackages, getAddons } from "../services/firestore"
+import { useEffect, useState } from "react"
+import { getDemos } from "../services/firestore"
+import type { Demo } from "../services/firestore"
+import { demos as seedDemos } from "@/seed/demos"
 import { useRouter } from "next/navigation"
-import { useSearchParams } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import { Eye } from "lucide-react"
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("")
@@ -11,42 +14,26 @@ export default function HomePage() {
   const [sortBy, setSortBy] = useState<"price-low" | "price-high" | "featured">("featured")
   const [showLogin, setShowLogin] = useState(false)
   const router = useRouter()
-  const [searchParams] = useSearchParams()
 
   // Fetch data
-  const [demos, setDemos] = useState<Array<{
-    id: string
-    name: string
-    slug: string
-    category: string
-    description: string
-    price: number
-    thumbnail: string
-    screenshots: string[]
-    features: string[]
-    tags: string[]
-    livePreviewUrl: string
-    featured: boolean
-  }>>([])
+  const [demos, setDemos] = useState<Demo[]>([])
 
-  const [packages, setPackages] = useState<Array<{
-    id: "starter" | "business" | "pro"
-    name: string
-    price: number
-    features: string[]
-    includedPages: number
-  }>>([])
-
-  const [addons, setAddons] = useState<Array<{
-    id: string
-    name: string
-    description: string
-    price: number
-    category: string
-  }>>([])
-
-  // Initialize data on mount
-  // In a real app, this would be on the server with useSearchParams
+  // Initialize data on mount, falling back to bundled seed data
+  useEffect(() => {
+    async function load() {
+      try {
+        const data = await getDemos()
+        if (data && data.length > 0) {
+          setDemos(data)
+          return
+        }
+      } catch (err) {
+        console.warn("Could not load demos from Firestore, using seed data", err)
+      }
+      setDemos(seedDemos)
+    }
+    load()
+  }, [])
   
   const categories = [
     "restaurant", "cafe", "gym", "salon", "clinic",
@@ -86,7 +73,6 @@ export default function HomePage() {
               Get Started
             </Button>
             <Button 
-              asChild 
               variant="default"
               onClick={() => setShowLogin(true)}
               className="px-4 py-2"
@@ -116,11 +102,10 @@ export default function HomePage() {
               and get your business online
             </h2>
             <p className="text-zinc-600 dark:text-zinc-400 text-lg max-w-2xl mx-auto mb-10">
-              "Choose a design, customize your package, submit your requirements, and get your business online without endless meetings."
+              &quot;Choose a design, customize your package, submit your requirements, and get your business online without endless meetings.&quot;
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center sm:justify-start">
               <Button 
-                asChild 
                 onClick={() => router.push("/websites")}
                 className="flex-1 sm:max-w-200 py-3 px-6 text-lg font-medium"
               >
@@ -128,7 +113,6 @@ export default function HomePage() {
               </Button>
               <Button 
                 variant="outline"
-                asChild 
                 onClick={() => router.push("/packages")}
                 className="flex-1 sm:max-w-200 py-3 px-6 text-lg font-medium"
               >
@@ -306,7 +290,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold mb-4">Popular Industries</h2>
-            <p className="text-zinc-600">We've designed websites for these businesses</p>
+            <p className="text-zinc-600">We&apos;ve designed websites for these businesses</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
             {[
@@ -349,7 +333,6 @@ export default function HomePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center sm:justify-start">
               <Button 
-                asChild 
                 onClick={() => router.push("/websites")}
                 className="flex-1 sm:max-w-200 py-3 px-6 text-lg font-medium"
               >
@@ -357,7 +340,6 @@ export default function HomePage() {
               </Button>
               <Button 
                 variant="outline"
-                asChild 
                 onClick={() => router.push("/packages")}
                 className="flex-1 sm:max-w-200 py-3 px-6 text-lg font-medium"
               >

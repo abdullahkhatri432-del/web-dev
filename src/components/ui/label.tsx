@@ -5,11 +5,11 @@ export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> 
   htmlFor?: string
 }
 
-const Label = React.forwardRef<HTMLLabel, LabelProps>(
+const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
   ({ className, htmlFor, children, ...props }, ref) => {
     return (
       <label
-        className=cn("flex h-10 w-full rounded-md border border-border px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2", className)
+        className={cn("flex h-10 w-full rounded-md border border-border px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2", className)}
         htmlFor={htmlFor}
         {...props}
       >

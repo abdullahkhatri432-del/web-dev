@@ -9,17 +9,15 @@ export interface DialogProps extends React.ComponentPropsWithoutRef<"div"> {
 }
 
 const Dialog = React.forwardRef<HTMLDivElement, DialogProps>(
-  ({ className, open, onOpenChange, children, ...props }, ref) => {
+  ({ className, children, ...props }, ref) => {
     return (
       <Slot
         ref={ref}
-        open={open}
-        onOpenChange={onOpenChange}
-        className=cn(
+        className={cn(
           "fixed inset-0 z-50 transition-opacity",
           "bg-black/50 backdrop-blur-sm rtl:justify-end",
           "animate-fade-in-medium-0 duration-200"
-        )
+        )}
         {...props}
       >
         <div className="relative top-20 max-w-2xl w-full margin-auto bg-card p-6 shadow-lg transition-all duration-300 sm:top-24">

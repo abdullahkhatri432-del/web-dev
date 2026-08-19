@@ -1,15 +1,24 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
-import { onAuthStateChanged, User } from "firebase/auth"
-import { auth } from "../firebase/config"
+import { useEffect, useState } from "react"
+import {
+  onAuthStateChanged,
+  signInWithPopup,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  signOut as firebaseSignOut,
+  GoogleAuthProvider,
+  type User,
+} from "firebase/auth"
+import { auth, googleProvider } from "../firebase/config"
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const unsub = onAuthStateChanged(user, (currentUser) => {
+    const unsub = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser)
       setLoading(false)
     })
@@ -18,16 +27,8 @@ export function useAuth() {
   }, [])
 
   const signInWithGoogle = async () => {
-    const provider = new GoogleAuthProvider()
     try {
-      const result = await import("firebase/auth").then(mod => {
-        const googleProvider = new mod.GoogleAuthProvider()
-        googleProvider.setCustomParameters({
-          prompt: "select_account",
-          login_hint: "maximize_continue",
-        })
-        return signInWithPopup(auth, googleProvider)
-      })
+      const result = await signInWithPopup(auth, googleProvider)
       return result
     } catch (error) {
       console.error("Google sign in error:", error)
@@ -35,11 +36,9 @@ export function useAuth() {
     }
   }
 
-  const signInWithEmailAndPassword = async (email: string, password: string) => {
+  const signInWithEmailAndPasswordFn = async (email: string, password: string) => {
     try {
-      await import("firebase/auth").then(mod => {
-        return signInWithEmailAndPassword(auth, email, password)
-      })
+      return await signInWithEmailAndPassword(auth, email, password)
     } catch (error) {
       console.error("Email sign in error:", error)
       throw error
@@ -48,9 +47,7 @@ export function useAuth() {
 
   const registerWithEmailAndPassword = async (email: string, password: string) => {
     try {
-      await import("firebase/auth").then(mod => {
-        return createUserWithEmailAndPassword(auth, email, password)
-      })
+      return await createUserWithEmailAndPassword(auth, email, password)
     } catch (error) {
       console.error("Email registration error:", error)
       throw error
@@ -59,9 +56,7 @@ export function useAuth() {
 
   const sendPasswordReset = async (email: string) => {
     try {
-      await import("firebase/auth").then(mod => {
-        return sendPasswordEmail(auth, email)
-      })
+      await sendPasswordResetEmail(auth, email)
     } catch (error) {
       console.error("Password reset error:", error)
       throw error
@@ -70,14 +65,12 @@ export function useAuth() {
 
   const signOut = async () => {
     try {
-      await import("firebase/auth").then(mod => {
-        return signOut(auth)
-      })
+      await firebaseSignOut(auth)
     } catch (error) {
       console.error("Sign out error:", error)
       throw error
     }
   }
 
-  return { user, loading, signInWithGoogle, signInWithEmailAndPassword, registerWithEmailAndPassword, sendPasswordReset, signOut }
+  return { user, loading, signInWithGoogle, signInWithEmailAndPassword: signInWithEmailAndPasswordFn, registerWithEmailAndPassword, sendPasswordReset, signOut }
 }

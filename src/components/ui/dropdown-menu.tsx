@@ -11,7 +11,7 @@ const DropdownMenu = React.forwardRef<HTMLDivElement, DropdownMenuProps>(
     return (
       <Slot
         ref={ref}
-        className=cn("z-50", className)
+        className={cn("z-50", className)}
         {...props}
       >
         {children}

@@ -13,10 +13,10 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
     return (
       <Slot
         ref={ref}
-        className=cn(
+        className={cn(
           "relative flex h-10 w-10 rounded-full overflow-hidden flex-shrink-0",
           className
-        )
+        )}
         {...props}
       >
         <img

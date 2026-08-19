@@ -1,16 +1,16 @@
 /**
  * Server-side Firebase Admin Setup
- * 
+ *
  * This uses the Firebase Admin SDK only on the server side.
  * The service account key should be stored as a base64-encoded env var
  * and decoded at runtime. Never commit the raw key to the repository.
- * 
+ *
  * Set FIREBASE_SERVICE_ACCOUNT_BASE64 in your .env file.
  */
 
-import { adminDb, adminAuth } from "./server"
-import { onValue, query, orderByValue, limitToLast } from "firebase/database"
-import { doc, getDoc, setDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore"
+import { cert, getApps, initializeApp as initializeAdminApp, type App } from "firebase-admin/app"
+import { getFirestore } from "firebase-admin/firestore"
+import { getAuth } from "firebase-admin/auth"
 
 // Helper to decode the base64 service account
 function decodeServiceAccount() {
@@ -22,39 +22,27 @@ function decodeServiceAccount() {
   return JSON.parse(json)
 }
 
-// Initialize Admin SDK only on server side
-let adminInitialized = false
+let adminApp: App | null = null
 
-export async function initializeAdminSdk() {
-  if (adminInitialized) return
-  
-  try {
-    const serviceAccount = decodeServiceAccount()
-    
-    const { initializeApp } = await import("firebase-admin/app")
-    const { getFirestore } = await import("firebase-admin/firestore")
-    const { getAuth } = await import("firebase-admin/auth")
-    
-    // Initialize Admin App
-    // @ts-expect-error - adminApp type
-    const adminApp = initializeApp({
-      credential: require("firebase-admin").credential.cert(serviceAccount),
-    })
-    
-    adminAuth = getAuth(adminApp)
-    adminDb = getFirestore(adminApp)
-    
-    adminInitialized = true
-  } catch (error) {
-    console.error("Failed to initialize Firebase Admin SDK", error)
-    // Fallback: use client-side Firestore if Admin SDK fails
-    // This is intentional for development or when service account is not configured
+export function getAdminApp(): App {
+  if (adminApp) return adminApp
+
+  const existing = getApps()[0]
+  if (existing) {
+    adminApp = existing
+    return existing
   }
+
+  adminApp = initializeAdminApp({
+    credential: cert(decodeServiceAccount()),
+  })
+  return adminApp
 }
 
-// Call initialization on module import (server-side only)
-if (typeof window === "undefined") {
-  initializeAdminSdk().catch(console.error)
+export function getAdminDb() {
+  return getFirestore(getAdminApp())
 }
 
-export { adminDb, adminAuth }
+export function getAdminAuth() {
+  return getAuth(getAdminApp())
+}

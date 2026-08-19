@@ -1,9 +1,19 @@
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import { Label } from "@/components/ui/label"
+
+interface FormFieldLike {
+  id?: string
+  label?: string
+  error?: { message?: string } | null
+  getInputProps?: () => Record<string, unknown>
+  getElementProps?: () => Record<string, unknown>
+  render?: () => React.ReactNode
+}
 
 export interface FormFieldProps {
-  field: any
-  fieldset?: React.HTMLFieldSetProps
+  field: FormFieldLike
+  fieldset?: React.FieldsetHTMLAttributes<HTMLFieldSetElement>
   className?: string
 }
 
@@ -17,8 +27,8 @@ export function FormField({ field, fieldset, className }: FormFieldProps) {
         {fieldset ? (
           <fieldset {...fieldset} />
         ) : (
-          <div {...field.getInputProps()} {...field.getElementProps()}>
-            {field.render()}
+          <div {...field.getInputProps?.()} {...field.getElementProps?.()}>
+            {field.render?.()}
           </div>
         )}
         {field.error && (

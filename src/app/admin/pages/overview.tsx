@@ -1,23 +1,5 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { 
-  Users, 
-  Building, 
-  Layout, 
-  Folder, 
-  Clipboard, 
-  Sun,
-  Moon,
-  ChartLine,
-  Mail,
-  Calendar,
-  Shield,
-  FolderOpen,
-  FolderSearch,
-  Settings,
-  Package,
-  Box,
-  MailCheck,
-} from "lucide-react"
+import { Building, Calendar, Sun } from "lucide-react"
 
 export default function AdminOverviewPage() {
   return (
@@ -52,7 +34,7 @@ export default function AdminOverviewPage() {
                 <p className="text-3xl font-bold text-primary">1,247</p>
                 <p className="text-zinc-500">Total Orders</p>
               </div>
-              <Building className="h-6 w-6 text-primary-500" />
+              <Building className="h-6 w-6 text-primary" />
             </div>
             <p className="text-zinc-500 mt-2">+8.5% from last month</p>
           </CardContent>

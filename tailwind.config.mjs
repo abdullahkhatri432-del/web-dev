@@ -1,16 +1,14 @@
-import tailwindcss from "@tailwindcss/postcss"
-
 export default {
   darkMode: ["class"],
   content: [
-    "./app/**/*.{js,ts,jsx,tsx}",
-    "./components/**/*.{js,ts,jsx,tsx}",
+    "./src/app/**/*.{js,ts,jsx,tsx}",
+    "./src/components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
       fontFamily: {
-        display: ['"Inter"', 'sans-serif'],
-        body: ['"Inter"', 'sans-serif'],
+        display: ['"Inter"', "sans-serif"],
+        body: ['"Inter"', "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",

@@ -3,13 +3,16 @@ import {
   collection, 
   doc, 
   addDoc, 
+  setDoc, 
   getDoc, 
   getDocs, 
   query, 
   orderBy, 
   where, 
   limit, 
-  updateDoc 
+  updateDoc,
+  type Query,
+  type QueryConstraint
 } from "firebase/firestore"
 
 // Types
@@ -34,8 +37,8 @@ export interface Demo {
   screenshots: string[]
   features: string[]
   tags: string[]
-  livePreviewUrl: string
-  featured: boolean
+  livePreviewUrl?: string
+  featured?: boolean
 }
 
 export interface Package {
@@ -141,6 +144,7 @@ export interface Coupon {
 
 // Users collection
 export async function createUser(userData: {
+  id?: string
   email: string | null
   displayName: string | null
   phone: string | null
@@ -186,8 +190,8 @@ export async function getDemos(filters?: {
   minPrice?: number
   maxPrice?: number
 }) {
-  let demosRef = collection(db, "demos")
-  const constraints: any[] = []
+  let demosRef: Query = collection(db, "demos")
+  const constraints: QueryConstraint[] = []
   
   if (filters?.category) {
     constraints.push(where("category", "==", filters.category))
@@ -196,7 +200,7 @@ export async function getDemos(filters?: {
     constraints.push(where("featured", "==", true))
   }
   if (filters?.search) {
-    constraints.push(where("name", ">==", filters.search))
+    constraints.push(where("name", ">=", filters.search))
     constraints.push(where("name", "<", filters.search + "\u0000"))
   }
   if (filters?.minPrice !== undefined) {
