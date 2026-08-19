@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="500" viewBox="0 0 800 500">
+<defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d946ef"/>
+      <stop offset="100%" stop-color="#a78bfa"/>
+    </linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#141419"/>
+      <stop offset="100%" stop-color="#0b0b0f"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#d946ef" stop-opacity="0.28"/>
+      <stop offset="100%" stop-color="#d946ef" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#ffffff" stroke-opacity="0.04" stroke-width="1"/>
+    </pattern>
+  </defs>
+<rect width="800" height="500" fill="#0b0b0f"/>
+  <rect width="800" height="500" fill="url(#grid)"/>
+  <circle cx="400" cy="170" r="230" fill="url(#glow)"/>
+  <rect width="800" height="36" fill="#141419"/>
+  <circle cx="22" cy="18" r="4.5" fill="#ff5f57"/>
+  <circle cx="38" cy="18" r="4.5" fill="#febc2e"/>
+  <circle cx="54" cy="18" r="4.5" fill="#28c840"/>
+  <rect x="74" y="10" width="300" height="16" rx="8" fill="#1e1e26"/>
+  <text x="90" y="22" font-family="Segoe UI, system-ui, sans-serif" font-size="10" fill="#8a8a93">webforge.app/preview/agency-case-studies/screen-2</text>
+<rect x="52" y="66" width="180" height="14" rx="7" fill="url(#g1)"/>
+<rect x="52" y="92" width="300" height="10" rx="5" fill="#d4d4d8"/>
+<rect x="52" y="110" width="240" height="10" rx="5" fill="#d4d4d8"/>
+<rect x="52" y="146" width="340" height="230" rx="16" fill="#17171d"/>
+<rect x="68" y="162" width="308" height="150" rx="10" fill="url(#g1)" opacity="0.55"/>
+<rect x="68" y="324" width="180" height="9" rx="4.5" fill="#d4d4d8"/>
+<rect x="68" y="342" width="240" height="8" rx="4" fill="#52525b"/>
+<rect x="68" y="358" width="200" height="8" rx="4" fill="#52525b"/>
+<rect x="424" y="146" width="324" height="230" rx="16" fill="#17171d"/>
+<rect x="440" y="162" width="292" height="150" rx="10" fill="#232329"/>
+<rect x="440" y="324" width="180" height="9" rx="4.5" fill="#d4d4d8"/>
+<rect x="440" y="342" width="240" height="8" rx="4" fill="#52525b"/>
+<rect x="440" y="358" width="200" height="8" rx="4" fill="#52525b"/>
+<text x="52" y="470" font-family="Segoe UI, system-ui, sans-serif" font-size="11" font-weight="600" fill="#a1a1aa">WebForge  •  Agency  •  Screen 2</text>
+</svg>

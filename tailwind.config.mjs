@@ -7,8 +7,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        display: ['"Inter"', "sans-serif"],
-        body: ['"Inter"', "sans-serif"],
+        display: ['var(--font-geist-sans)', "Inter", "sans-serif"],
+        body: ['var(--font-geist-sans)', "Inter", "sans-serif"],
+        mono: ['var(--font-geist-mono)', "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",

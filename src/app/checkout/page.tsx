@@ -1,10 +1,15 @@
 "use client"
 
-import { Suspense, useEffect, useState } from "react"
-import { getDemoById, getPackage, getAddons } from "../../services/firestore"
+import { Suspense, useEffect, useState, type ChangeEvent } from "react"
+import Link from "next/link"
 import { useRouter, useSearchParams } from "next/navigation"
+import { ArrowLeft, ArrowRight, Check, ShieldCheck, QrCode } from "lucide-react"
+import { getDemoById, getPackage, getAddons } from "../../services/firestore"
 import type { Demo, Package, Addon } from "../../services/firestore"
 import { Button } from "@/components/ui/button"
+import { Navbar } from "@/components/site/navbar"
+import { Footer } from "@/components/site/footer"
+import { UpiQrModal, UPI_ID } from "@/components/site/upi-qr-modal"
 
 type FormData = {
   packageId: "starter" | "business" | "pro"
@@ -15,18 +20,8 @@ type FormData = {
   phone: string
   whatsapp: string
   businessAddress: string
-  instagram: string
-  facebook: string
-  googleBusinessProfile: string
   businessDescription: string
-  businessModel: string
-  neededPages: string[]
-  colorPreference: string
-  hasLogo: boolean
-  hasExistingWebsite: boolean
   likedWebsites: string
-  specialFunctionality: string
-  preferredDeliveryDate: string
   uploadedFiles: Array<{ id: string; name: string; url: string }>
 }
 
@@ -36,14 +31,21 @@ const PKG_OPTIONS: Record<FormData["packageId"], { name: string; price: number; 
   pro: { name: "PRO", price: 29999, features: ["Up to 12 pages", "Advanced animations"], includedPages: 12 },
 }
 
+const STEPS = ["Demo", "Package", "Add-ons", "Details", "Review"]
+
+function formatPrice(price: number) {
+  return price.toLocaleString("en-IN")
+}
+
 function CheckoutContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const demoId = searchParams.get("demoId")
+  const prePkg = searchParams.get("package")
 
   const [step, setStep] = useState(1)
   const [formData, setFormData] = useState<FormData>({
-    packageId: "starter",
+    packageId: (prePkg as FormData["packageId"]) ?? "starter",
     selectedAddons: [],
     businessName: "",
     ownerName: "",
@@ -51,37 +53,36 @@ function CheckoutContent() {
     phone: "",
     whatsapp: "",
     businessAddress: "",
-    instagram: "",
-    facebook: "",
-    googleBusinessProfile: "",
     businessDescription: "",
-    businessModel: "",
-    neededPages: [],
-    colorPreference: "",
-    hasLogo: false,
-    hasExistingWebsite: false,
     likedWebsites: "",
-    specialFunctionality: "",
-    preferredDeliveryDate: "",
     uploadedFiles: [],
   })
 
   const [demo, setDemo] = useState<Demo | null>(null)
   const [addonsList, setAddonsList] = useState<Addon[]>([])
   const [, setPackages] = useState<Package[]>([])
+  const [showUpi, setShowUpi] = useState(false)
 
   useEffect(() => {
+    let cancelled = false
     async function load() {
-      if (demoId) {
-        const d = await getDemoById(demoId)
-        setDemo(d)
+      try {
+        if (demoId) {
+          const d = await getDemoById(demoId)
+          if (!cancelled) setDemo(d)
+        }
+        const p = await Promise.all<Package>(["starter", "business", "pro"].map((id) => getPackage(id as FormData["packageId"])))
+        if (!cancelled) setPackages(p)
+        const a = await getAddons()
+        if (!cancelled) setAddonsList(a)
+      } catch (err) {
+        console.warn("Checkout data load failed", err)
       }
-      const p = await Promise.all<Package>(["starter", "business", "pro"].map((id) => getPackage(id as "starter" | "business" | "pro")))
-      setPackages(p)
-      const a = await getAddons()
-      setAddonsList(a)
     }
-    load().catch((err) => console.warn("Checkout data load failed", err))
+    load()
+    return () => {
+      cancelled = true
+    }
   }, [demoId])
 
   const addonOpts = addonsList.map((a) => ({ id: a.id, name: a.name, price: a.price, desc: a.description }))
@@ -102,7 +103,7 @@ function CheckoutContent() {
     nextStep()
   }
 
-  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (files && files[0]) {
       setFormData((prev) => ({
@@ -112,238 +113,316 @@ function CheckoutContent() {
     }
   }
 
+  const inputCls =
+    "mt-1 flex h-11 w-full rounded-xl border border-white/10 bg-card/60 px-4 py-2 text-sm text-white placeholder:text-zinc-500 outline-none transition-all focus:border-amber-400/50 focus:ring-2 focus:ring-ring/30"
+
   return (
     <main className="flex-1">
-      <header className="border-b bg-background/80 backdrop-blur-sm fixed w-full top-0 left-0 right-0 z-50 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <svg className="h-5 w-5 text-zinc-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 19l-7-7-7 7"></path></svg>
-            <h2 className="font-semibold">Checkout</h2>
-          </div>
-          <div className="flex gap-1">
-            <div className="w-6 h-6 rounded-full bg-zinc-300 flex items-center justify-center text-sm font-medium">{step}</div>
-            <span className="mx-1">/</span>
-            <div className="w-6 h-6 rounded-full bg-zinc-300 flex items-center justify-center text-sm font-medium">5</div>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
-      <div className="p-6 pt-20">
-        {step === 1 && (
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Select a Demo</h2>
-            {demo ? (
-              <div className="bg-white rounded-xl p-6 shadow-sm">
-                <img src={demo.thumbnail} alt={demo.name} className="w-full h-48 object-cover rounded-xl mb-4" />
-                <h3 className="text-xl font-bold">{demo.name}</h3>
-                <p className="text-zinc-600">{demo.description}</p>
-                <p className="text-accent font-medium">₹{demo.price}</p>
-                <Button className="w-full py-3 mt-4" onClick={nextStep}>
-                  Select Package
-                </Button>
-              </div>
-            ) : (
-              <p className="text-zinc-500">No demo selected. Go back and pick a website first.</p>
-            )}
-          </div>
-        )}
-
-        {step === 2 && (
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Select Package</h2>
-            <div className="grid grid-cols-1 gap-6">
-              {(Object.entries(PKG_OPTIONS) as Array<[FormData["packageId"], typeof PKG_OPTIONS[FormData["packageId"]]]>).map(([key, pkg]) => (
-                <div
-                  key={key}
-                  className={`rounded-2xl p-6 border cursor-pointer ${formData.packageId === key ? "border-primary bg-primary/5" : "border-border hover:border-primary"}`}
-                  onClick={() => setFormData((prev) => ({ ...prev, packageId: key }))}
-                >
-                  <h4 className="text-xl font-bold">{pkg.name}</h4>
-                  <p className="text-zinc-600">₹{pkg.price}</p>
-                  <p className="text-sm text-zinc-500">Starting price</p>
-                  {pkg.features.map((f) => (
-                    <div key={f} className="flex items-start">
-                      <svg className="h-4 w-4 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                      <span className="ml-2 text-sm">{f}</span>
-                    </div>
-                  ))}
-                  <div className="mt-3 pt-2 text-sm text-zinc-500">
-                    <span>Included pages:</span> {pkg.includedPages}
-                  </div>
-                  <Button
-                    className="w-full py-3 mt-4 font-medium"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      nextStep()
-                    }}
+      <section className="mx-auto max-w-5xl px-6 pb-24 pt-28">
+        {/* Stepper */}
+        <div className="mx-auto mb-10 flex max-w-xl items-center">
+          {STEPS.map((label, i) => {
+            const num = i + 1
+            const active = step === num
+            const done = step > num
+            return (
+              <div key={label} className={`flex items-center ${i < STEPS.length - 1 ? "flex-1" : ""}`}>
+                <div className="flex flex-col items-center">
+                  <div
+                    className={`flex h-9 w-9 items-center justify-center rounded-full border text-sm font-semibold transition-all ${
+                      done
+                        ? "border-amber-400 bg-amber-400 text-[#0b0b0b]"
+                        : active
+                          ? "border-amber-400/60 bg-amber-400/15 text-amber-300 ring-glow"
+                          : "border-white/10 bg-[#101014] text-zinc-500"
+                    }`}
                   >
-                    {formData.packageId === key ? "Selected - Continue" : "Select Package"}
+                    {done ? <Check className="h-4 w-4" /> : num}
+                  </div>
+                  <span className={`mt-2 hidden text-xs sm:block ${active ? "text-amber-300" : "text-zinc-600"}`}>
+                    {label}
+                  </span>
+                </div>
+                {i < STEPS.length - 1 && (
+                  <div className={`mx-2 mb-5 h-px flex-1 sm:mb-0 ${done ? "bg-amber-400/50" : "bg-white/10"}`} />
+                )}
+              </div>
+            )
+          })}
+        </div>
+
+        <div className="overflow-hidden rounded-3xl border border-white/5 bg-[#101014] shadow-card">
+          <div className="border-b border-white/5 bg-white/[0.02] px-8 py-5">
+            <h2 className="text-xl font-bold text-white">Step {step} · {STEPS[step - 1]}</h2>
+          </div>
+
+          <div className="p-8">
+            {step === 1 && (
+              <div>
+                {demo ? (
+                  <div className="grid gap-6 md:grid-cols-[240px_1fr]">
+                    <div className="overflow-hidden rounded-2xl border border-white/10">
+                      <img src={demo.thumbnail} alt={demo.name} className="h-full w-full object-cover" />
+                    </div>
+                    <div>
+                      <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-amber-300 inline-block">
+                        {demo.category}
+                      </div>
+                      <h3 className="mt-3 text-2xl font-bold text-white">{demo.name}</h3>
+                      <p className="mt-2 text-zinc-400">{demo.description}</p>
+                      <p className="mt-4 text-2xl font-bold text-amber-400">₹{formatPrice(demo.price)}</p>
+                      <Button className="mt-6" onClick={nextStep}>
+                        Select this design
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <p className="text-zinc-500">No demo selected.</p>
+                    <Button asChild variant="outline" className="mt-6">
+                      <Link href="/websites">Browse templates</Link>
+                    </Button>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {step === 2 && (
+              <div className="grid gap-4 md:grid-cols-3">
+                {(Object.entries(PKG_OPTIONS) as Array<[FormData["packageId"], (typeof PKG_OPTIONS)[FormData["packageId"]]]>).map(([key, pkg]) => (
+                  <div
+                    key={key}
+                    onClick={() => setFormData((prev) => ({ ...prev, packageId: key }))}
+                    className={`cursor-pointer rounded-2xl border p-6 transition-all ${
+                      formData.packageId === key
+                        ? "border-amber-400/50 bg-amber-400/5 ring-glow"
+                        : "border-white/10 bg-white/[0.02] hover:border-white/25"
+                    }`}
+                  >
+                    <h4 className="text-lg font-bold text-white">{pkg.name}</h4>
+                    <p className="mt-1 text-2xl font-bold text-amber-400">₹{formatPrice(pkg.price)}</p>
+                    <p className="mt-1 text-xs text-zinc-500">Starting price</p>
+                    <ul className="mt-4 space-y-2">
+                      {pkg.features.map((f) => (
+                        <li key={f} className="flex items-center gap-2 text-sm text-zinc-400">
+                          <Check className="h-3.5 w-3.5 text-amber-400" />
+                          {f}
+                        </li>
+                      ))}
+                      <li className="flex items-center gap-2 text-sm text-zinc-400">
+                        <Check className="h-3.5 w-3.5 text-amber-400" />
+                        {pkg.includedPages} pages included
+                      </li>
+                    </ul>
+                  </div>
+                ))}
+                <div className="md:col-span-3 flex justify-end">
+                  <Button onClick={nextStep}>
+                    Continue
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 </div>
-              ))}
-            </div>
-            {!demo && <p className="text-zinc-500 mt-4">Select a demo first</p>}
-          </div>
-        )}
+              </div>
+            )}
 
-        {step === 3 && (
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Select Add-ons</h2>
-            <div className="space-y-4">
-              {addonOpts.map((a) => (
-                <div
-                  key={a.id}
-                  className={`p-4 rounded-xl border cursor-pointer ${formData.selectedAddons.includes(a.id) ? "border-primary" : "border-border"}`}
-                  onClick={() => {
-                    const isSel = formData.selectedAddons.includes(a.id)
-                    setFormData((prev) => ({
-                      ...prev,
-                      selectedAddons: isSel ? prev.selectedAddons.filter((x) => x !== a.id) : [...prev.selectedAddons, a.id],
-                    }))
-                  }}
-                >
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h4 className="font-medium">{a.name}</h4>
-                      <p className="text-xs text-zinc-500">{a.desc}</p>
+            {step === 3 && (
+              <div>
+                <div className="space-y-3">
+                  {addonOpts.map((a) => {
+                    const selected = formData.selectedAddons.includes(a.id)
+                    return (
+                      <div
+                        key={a.id}
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            selectedAddons: selected
+                              ? prev.selectedAddons.filter((x) => x !== a.id)
+                              : [...prev.selectedAddons, a.id],
+                          }))
+                        }}
+                        className={`flex cursor-pointer items-center justify-between rounded-2xl border p-5 transition-all ${
+                          selected ? "border-amber-400/50 bg-amber-400/5" : "border-white/10 bg-white/[0.02] hover:border-white/25"
+                        }`}
+                      >
+                        <div className="flex items-center gap-4">
+                          <div
+                            className={`flex h-6 w-6 items-center justify-center rounded-md border transition-colors ${
+                              selected ? "border-amber-400 bg-amber-400 text-[#0b0b0b]" : "border-white/20"
+                            }`}
+                          >
+                            {selected && <Check className="h-4 w-4" />}
+                          </div>
+                          <div>
+                            <h4 className="font-semibold text-white">{a.name}</h4>
+                            <p className="text-xs text-zinc-500">{a.desc}</p>
+                          </div>
+                        </div>
+                        <span className="font-semibold text-amber-400">+₹{formatPrice(a.price)}</span>
+                      </div>
+                    )
+                  })}
+                </div>
+                {addonOpts.length === 0 && (
+                  <p className="text-center text-zinc-500 py-8">No add-ons available yet — skip ahead.</p>
+                )}
+                <div className="mt-6 flex justify-between">
+                  <Button variant="outline" onClick={prevStep}>
+                    <ArrowLeft className="mr-2 h-4 w-4" /> Back
+                  </Button>
+                  <Button onClick={nextStep}>
+                    Continue
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {step === 4 && (
+              <div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {(
+                    [
+                      ["businessName", "Business name"],
+                      ["ownerName", "Owner name"],
+                      ["email", "Email"],
+                      ["phone", "Phone"],
+                      ["whatsapp", "WhatsApp"],
+                      ["businessAddress", "Business address"],
+                    ] as Array<[keyof FormData, string]>
+                  ).map(([key, label]) => (
+                    <div key={key}>
+                      <label className="text-sm font-medium text-zinc-300">{label}</label>
+                      <input
+                        type="text"
+                        className={inputCls}
+                        value={String(formData[key] ?? "")}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, [key]: e.target.value }))}
+                      />
                     </div>
-                    <div className="text-right">
-                      <span className="text-accent font-medium">₹{a.price}</span>
-                      <svg className="h-4 w-4 mt-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-                    </div>
-                  </div>
-                  <p className="text-xs mt-2 text-zinc-500">Add ₹{a.price} to total</p>
-                </div>
-              ))}
-              <div className="mt-4 pt-4 border-t">
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  <div><span className="text-zinc-500">Package:</span> ₹{pPrice}</div>
-                  <div><span className="text-zinc-500">Add-ons:</span> ₹{aPrice}</div>
-                </div>
-                <div className="mt-2 font-medium">
-                  <span>Subtotal:</span> ₹{sub}
-                </div>
-                <Button className="w-full mt-4" onClick={nextStep}>
-                  Continue to Business Info
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {step === 4 && (
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Business Information</h2>
-            <p className="text-zinc-500 mb-4">Required for order processing</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {(
-                [
-                  ["businessName", "Business name"],
-                  ["ownerName", "Owner name"],
-                  ["email", "Email"],
-                  ["phone", "Phone"],
-                  ["whatsapp", "WhatsApp"],
-                  ["businessAddress", "Business address"],
-                ] as Array<[keyof FormData, string]>
-              ).map(([key, label]) => (
-                <div key={key}>
-                  <label className="text-sm font-medium">{label}</label>
-                  <input
-                    type="text"
-                    className="mt-1 flex h-10 w-full rounded-md border border-border px-3 py-2 text-sm"
-                    value={String(formData[key] ?? "")}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, [key]: e.target.value }))}
-                  />
-                </div>
-              ))}
-            </div>
-            <div className="mt-6 flex gap-3">
-              <Button variant="outline" onClick={prevStep}>Back</Button>
-              <Button onClick={() => onBizSubmit({})}>Continue to Requirements</Button>
-            </div>
-          </div>
-        )}
-
-        {step === 5 && (
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Order Summary</h2>
-
-            <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <p className="text-zinc-500">Demo</p>
-                  <p className="font-medium">{demo?.name || "Not selected"}</p>
-                  <p className="text-accent">₹{demo?.price || 0}</p>
-                </div>
-                <div>
-                  <p className="text-zinc-500">Package</p>
-                  <p className="font-medium">{PKG_OPTIONS[formData.packageId]?.name || "Not selected"}</p>
-                  <p className="text-accent">₹{pPrice}</p>
-                </div>
-              </div>
-              {formData.selectedAddons.length > 0 && (
-                <div>
-                  <p className="text-zinc-500">Add-ons</p>
-                  <p className="text-accent">₹{aPrice}</p>
-                </div>
-              )}
-              <div>
-                <p className="text-zinc-500">Subtotal</p>
-                <p className="font-medium text-accent">₹{sub}</p>
-              </div>
-              <div>
-                <p className="text-zinc-500">Tax (18%)</p>
-                <p className="font-medium">₹{tax}</p>
-              </div>
-              <div>
-                <p className="text-accent font-medium text-lg">Total: ₹{total}</p>
-              </div>
-            </div>
-
-            <h3 className="text-xl font-semibold mb-3">Requirements</h3>
-            <p className="text-zinc-500 mb-2">What does your business do?</p>
-            <textarea
-              className="flex min-h-[80px] w-full rounded-md border border-border px-3 py-2 text-sm mb-4"
-              value={formData.businessDescription}
-              onChange={(e) => setFormData((prev) => ({ ...prev, businessDescription: e.target.value }))}
-            />
-            <div className="grid grid-cols-2 gap-2 mb-4">
-              <p className="text-sm">Have a logo?</p>
-              <p className="text-sm">Have existing website?</p>
-            </div>
-            <p className="text-zinc-500 mb-2">Websites you like (URLs):</p>
-            <input
-              type="text"
-              className="flex h-10 w-full rounded-md border border-border px-3 py-2 text-sm mb-4"
-              value={formData.likedWebsites}
-              onChange={(e) => setFormData((prev) => ({ ...prev, likedWebsites: e.target.value }))}
-            />
-            <div className="mb-4">
-              <label className="text-sm font-medium">Upload assets (logo, photos)</label>
-              <input type="file" onChange={onFileChange} className="mt-1" />
-              {formData.uploadedFiles.length > 0 && (
-                <ul className="mt-2 text-sm text-zinc-600">
-                  {formData.uploadedFiles.map((f) => (
-                    <li key={f.id}>{f.name}</li>
                   ))}
-                </ul>
-              )}
-            </div>
+                </div>
+                <div className="mt-6 flex justify-between">
+                  <Button variant="outline" onClick={prevStep}>
+                    <ArrowLeft className="mr-2 h-4 w-4" /> Back
+                  </Button>
+                  <Button onClick={() => onBizSubmit({})}>
+                    Continue to Review
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
 
-            <div className="mt-8 flex gap-3">
-              <Button variant="outline" onClick={prevStep}>Back</Button>
-              <Button onClick={() => router.push("/")}>Pay Now</Button>
-            </div>
+            {step === 5 && (
+              <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
+                <div className="space-y-6">
+                  <div>
+                    <h3 className="font-semibold text-white">What does your business do?</h3>
+                    <textarea
+                      className={`${inputCls} min-h-[100px]`}
+                      placeholder="e.g. We run a family restaurant in Jaipur and want to accept table reservations..."
+                      value={formData.businessDescription}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, businessDescription: e.target.value }))}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-white">Websites you like (URLs)</h3>
+                    <input
+                      type="text"
+                      className={inputCls}
+                      placeholder="https://..."
+                      value={formData.likedWebsites}
+                      onChange={(e) => setFormData((prev) => ({ ...prev, likedWebsites: e.target.value }))}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-white">Upload assets (logo, photos)</h3>
+                    <input type="file" onChange={onFileChange} className="mt-2 text-sm text-zinc-400 file:mr-3 file:rounded-full file:border-0 file:bg-amber-400/15 file:px-4 file:py-2 file:text-sm file:font-medium file:text-amber-300" />
+                    {formData.uploadedFiles.length > 0 && (
+                      <ul className="mt-3 space-y-1">
+                        {formData.uploadedFiles.map((f) => (
+                          <li key={f.id} className="text-sm text-zinc-400">· {f.name}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                  <div className="flex justify-between">
+                    <Button variant="outline" onClick={prevStep}>
+                      <ArrowLeft className="mr-2 h-4 w-4" /> Back
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="h-fit rounded-2xl border border-amber-400/20 bg-gradient-to-b from-amber-400/10 to-transparent p-6">
+                  <h3 className="text-lg font-bold text-white">Order summary</h3>
+                  <dl className="mt-5 space-y-3 text-sm">
+                    <div className="flex justify-between text-zinc-400">
+                      <dt>Design</dt>
+                      <dd className="text-white">₹{formatPrice(demo?.price ?? 0)}</dd>
+                    </div>
+                    <div className="flex justify-between text-zinc-400">
+                      <dt>Package ({PKG_OPTIONS[formData.packageId].name})</dt>
+                      <dd className="text-white">₹{formatPrice(pPrice)}</dd>
+                    </div>
+                    {formData.selectedAddons.length > 0 && (
+                      <div className="flex justify-between text-zinc-400">
+                        <dt>Add-ons</dt>
+                        <dd className="text-white">₹{formatPrice(aPrice)}</dd>
+                      </div>
+                    )}
+                    <div className="flex justify-between text-zinc-400">
+                      <dt>Tax (18%)</dt>
+                      <dd className="text-white">₹{formatPrice(tax)}</dd>
+                    </div>
+                    <div className="border-t border-white/10 pt-3">
+                      <div className="flex justify-between text-base font-bold">
+                        <dt className="text-white">Total</dt>
+                        <dd className="text-amber-400">₹{formatPrice(total)}</dd>
+                      </div>
+                    </div>
+                  </dl>
+                  <Button className="mt-6 w-full" size="lg" onClick={() => setShowUpi(true)}>
+                    <QrCode className="mr-2 h-4 w-4" />
+                    Pay ₹{formatPrice(total)} via UPI
+                  </Button>
+                  <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-zinc-500">
+                    <ShieldCheck className="h-3.5 w-3.5 text-amber-400" />
+                    Scan QR · Pay with any UPI app · {UPI_ID}
+                  </p>
+                  <p className="mt-1 text-center text-[11px] text-zinc-600">
+                    No advance to start — pay only when the design is approved.
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
-        )}
-      </div>
+        </div>
+      </section>
+
+      <UpiQrModal
+        key={showUpi ? "open" : "closed"}
+        open={showUpi}
+        onClose={() => setShowUpi(false)}
+        amount={total}
+        demo={demo}
+        addonPrices={addonOpts.filter((a) => formData.selectedAddons.includes(a.id)).map((a) => a.price)}
+        subtotal={sub}
+        tax={tax}
+        formData={formData}
+      />
+
+      <Footer />
     </main>
   )
 }
 
 export default function CheckoutPage() {
   return (
-    <Suspense fallback={<div className="p-6 pt-20">Loading checkout...</div>}>
+    <Suspense fallback={<div className="pt-28 text-center text-zinc-500">Loading checkout...</div>}>
       <CheckoutContent />
     </Suspense>
   )

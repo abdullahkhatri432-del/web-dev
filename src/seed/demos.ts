@@ -25,10 +25,10 @@ export const demos: Demo[] = [
     category: "restaurant",
     description: "Elegant restaurant website with food photography and reservation CTA",
     price: 7999,
-    thumbnail: "/demos/restaurant-bistro.jpg",
+    thumbnail: "/demos/restaurant-bistro.svg",
     screenshots: [
-      "/demos/restaurant-bistro-1.jpg",
-      "/demos/restaurant-bistro-2.jpg",
+      "/demos/restaurant-bistro-1.svg",
+      "/demos/restaurant-bistro-2.svg",
     ],
     features: [
       "Interactive menu grid",
@@ -47,10 +47,10 @@ export const demos: Demo[] = [
     category: "gym",
     description: "Bold typography, pricing and membership CTA for fitness businesses",
     price: 14999,
-    thumbnail: "/demos/gym-premium.jpg",
+    thumbnail: "/demos/gym-premium.svg",
     screenshots: [
-      "/demos/gym-premium-1.jpg",
-      "/demos/gym-premium-2.jpg",
+      "/demos/gym-premium-1.svg",
+      "/demos/gym-premium-2.svg",
     ],
     features: [
       "Class schedule",
@@ -69,10 +69,10 @@ export const demos: Demo[] = [
     category: "salon",
     description: "Luxury editorial design and booking CTA for high-end salons",
     price: 12999,
-    thumbnail: "/demos/salon-luxury.jpg",
+    thumbnail: "/demos/salon-luxury.svg",
     screenshots: [
-      "/demos/salon-luxury-1.jpg",
-      "/demos/salon-luxury-2.jpg",
+      "/demos/salon-luxury-1.svg",
+      "/demos/salon-luxury-2.svg",
     ],
     features: [
       "Appointment booking",
@@ -90,10 +90,10 @@ export const demos: Demo[] = [
     category: "clinic",
     description: "Trust-focused medical layout and appointment CTA for healthcare practices",
     price: 15999,
-    thumbnail: "/demos/clinic-trust.jpg",
+    thumbnail: "/demos/clinic-trust.svg",
     screenshots: [
-      "/demos/clinic-trust-1.jpg",
-      "/demos/clinic-trust-2.jpg",
+      "/demos/clinic-trust-1.svg",
+      "/demos/clinic-trust-2.svg",
     ],
     features: [
       "Doctor profiles",
@@ -111,10 +111,10 @@ export const demos: Demo[] = [
     category: "real-estate",
     description: "Property cards, filters and enquiry CTA for real estate agents",
     price: 18999,
-    thumbnail: "/demos/real-estate-modern.jpg",
+    thumbnail: "/demos/real-estate-modern.svg",
     screenshots: [
-      "/demos/real-estate-modern-1.jpg",
-      "/demos/real-estate-modern-2.jpg",
+      "/demos/real-estate-modern-1.svg",
+      "/demos/real-estate-modern-2.svg",
     ],
     features: [
       "Property listing grid",
@@ -132,10 +132,10 @@ export const demos: Demo[] = [
     category: "hotel",
     description: "Coastal-inspired hotel website with booking and gallery",
     price: 22999,
-    thumbnail: "/demos/hotel-ocean.jpg",
+    thumbnail: "/demos/hotel-ocean.svg",
     screenshots: [
-      "/demos/hotel-ocean-1.jpg",
-      "/demos/hotel-ocean-2.jpg",
+      "/demos/hotel-ocean-1.svg",
+      "/demos/hotel-ocean-2.svg",
     ],
     features: [
       "Room gallery",
@@ -153,10 +153,10 @@ export const demos: Demo[] = [
     category: "agency",
     description: "Modern case-study driven layout for creative agencies",
     price: 24999,
-    thumbnail: "/demos/agency-case-studies.jpg",
+    thumbnail: "/demos/agency-case-studies.svg",
     screenshots: [
-      "/demos/agency-case-studies-1.jpg",
-      "/demos/agency-case-studies-2.jpg",
+      "/demos/agency-case-studies-1.svg",
+      "/demos/agency-case-studies-2.svg",
     ],
     features: [
       "Case study carousel",
@@ -173,10 +173,10 @@ export const demos: Demo[] = [
     category: "saas",
     description: "Clean SaaS landing page with lead forms and analytics",
     price: 21999,
-    thumbnail: "/demos/saas-platform.jpg",
+    thumbnail: "/demos/saas-platform.svg",
     screenshots: [
-      "/demos/saas-platform-1.jpg",
-      "/demos/saas-platform-2.jpg",
+      "/demos/saas-platform-1.svg",
+      "/demos/saas-platform-2.svg",
     ],
     features: [
       "Feature grid",
@@ -193,10 +193,10 @@ export const demos: Demo[] = [
     category: "ecommerce",
     description: "Stylish ecommerce with product grids and checkout flow",
     price: 27999,
-    thumbnail: "/demos/ecommerce-fashion.jpg",
+    thumbnail: "/demos/ecommerce-fashion.svg",
     screenshots: [
-      "/demos/ecommerce-fashion-1.jpg",
-      "/demos/ecommerce-fashion-2.jpg",
+      "/demos/ecommerce-fashion-1.svg",
+      "/demos/ecommerce-fashion-2.svg",
     ],
     features: [
       "Product catalog",
@@ -213,10 +213,10 @@ export const demos: Demo[] = [
     category: "education",
     description: "Course platform with module navigation and instructor profiles",
     price: 19999,
-    thumbnail: "/demos/education-online.jpg",
+    thumbnail: "/demos/education-online.svg",
     screenshots: [
-      "/demos/education-online-1.jpg",
-      "/demos/education-online-2.jpg",
+      "/demos/education-online-1.svg",
+      "/demos/education-online-2.svg",
     ],
     features: [
       "Course catalog",
@@ -233,10 +233,10 @@ export const demos: Demo[] = [
     category: "photography",
     description: "Minimalist portfolio with gallery filtering and contact",
     price: 16999,
-    thumbnail: "/demos/photography-portfolio.jpg",
+    thumbnail: "/demos/photography-portfolio.svg",
     screenshots: [
-      "/demos/photography-portfolio-1.jpg",
-      "/demos/photography-portfolio-2.jpg",
+      "/demos/photography-portfolio-1.svg",
+      "/demos/photography-portfolio-2.svg",
     ],
     features: [
       "Gallery grid",
@@ -253,10 +253,10 @@ export const demos: Demo[] = [
     category: "local-business",
     description: "Simple local business website with contact and hours",
     price: 5999,
-    thumbnail: "/demos/local-business.jpg",
+    thumbnail: "/demos/local-business.svg",
     screenshots: [
-      "/demos/local-business-1.jpg",
-      "/demos/local-business-2.jpg",
+      "/demos/local-business-1.svg",
+      "/demos/local-business-2.svg",
     ],
     features: [
       "Contact form",

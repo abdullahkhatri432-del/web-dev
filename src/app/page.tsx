@@ -1,144 +1,238 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { getDemos } from "../services/firestore"
-import type { Demo } from "../services/firestore"
-import { demos as seedDemos } from "@/seed/demos"
+import { useEffect, useState, type FormEvent } from "react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
+import {
+  ArrowRight,
+  Search,
+  Sparkles,
+  ShieldCheck,
+  Zap,
+  Palette,
+  ClipboardList,
+  Rocket,
+  Star,
+  Quote,
+  Utensils,
+  Coffee,
+  Dumbbell,
+  Scissors,
+  Stethoscope,
+  Building2,
+  Hotel,
+  Briefcase,
+  Cloud,
+  ShoppingBag,
+  GraduationCap,
+  Camera,
+  Store,
+  Check,
+} from "lucide-react"
+import { getDemos } from "@/services/firestore"
+import type { Demo } from "@/services/firestore"
+import { demos as seedDemos, demoCategories as seedCategories } from "@/seed/demos"
 import { Button } from "@/components/ui/button"
-import { Eye } from "lucide-react"
+import { Navbar } from "@/components/site/navbar"
+import { Footer } from "@/components/site/footer"
+
+const categoryIcons: Record<string, typeof Utensils> = {
+  restaurant: Utensils,
+  cafe: Coffee,
+  gym: Dumbbell,
+  salon: Scissors,
+  clinic: Stethoscope,
+  "real-estate": Building2,
+  hotel: Hotel,
+  portfolio: Palette,
+  agency: Briefcase,
+  saas: Cloud,
+  ecommerce: ShoppingBag,
+  education: GraduationCap,
+  photography: Camera,
+  "local-business": Store,
+}
+
+const packages = [
+  {
+    id: "starter",
+    name: "Starter",
+    price: "₹7,999",
+    tagline: "For getting online fast",
+    features: ["Up to 3 pages", "Responsive design", "Mobile-friendly", "Contact form", "5-day delivery"],
+    popular: false,
+  },
+  {
+    id: "business",
+    name: "Business",
+    price: "₹14,999",
+    tagline: "For growing businesses",
+    features: ["Up to 7 pages", "Everything in Starter", "Blog / services section", "Google Maps + WhatsApp", "3-day delivery"],
+    popular: true,
+  },
+  {
+    id: "pro",
+    name: "Pro",
+    price: "₹29,999",
+    tagline: "For serious brands",
+    features: ["Up to 12 pages", "Everything in Business", "Advanced animations", "Online booking / payments", "Priority 2-day delivery"],
+    popular: false,
+  },
+]
+
+const testimonials = [
+  {
+    quote: "Got my restaurant website live in 4 days. No calls, no back-and-forth — just picked a design, paid, and it was done.",
+    name: "Arjun Mehta",
+    role: "Restaurant owner, Mumbai",
+  },
+  {
+    quote: "The best part is knowing the exact price upfront. My gym website looks better than what agencies quoted 5x more for.",
+    name: "Priya Sharma",
+    role: "Gym founder, Delhi",
+  },
+  {
+    quote: "They handled the logo, the pages, everything. I just answered one simple form. Highly recommended.",
+    name: "Rahul Verma",
+    role: "Clinic director, Bangalore",
+  },
+]
+
+function formatPrice(price: number) {
+  return price.toLocaleString("en-IN")
+}
 
 export default function HomePage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
-  const [sortBy, setSortBy] = useState<"price-low" | "price-high" | "featured">("featured")
-  const [showLogin, setShowLogin] = useState(false)
+  const [demos, setDemos] = useState<Demo[]>(seedDemos)
   const router = useRouter()
 
-  // Fetch data
-  const [demos, setDemos] = useState<Demo[]>([])
-
-  // Initialize data on mount, falling back to bundled seed data
   useEffect(() => {
+    let cancelled = false
     async function load() {
       try {
         const data = await getDemos()
-        if (data && data.length > 0) {
+        if (!cancelled && data && data.length > 0) {
           setDemos(data)
-          return
         }
-      } catch (err) {
-        console.warn("Could not load demos from Firestore, using seed data", err)
+      } catch {
+        // seed data already loaded
       }
-      setDemos(seedDemos)
     }
     load()
+    return () => {
+      cancelled = true
+    }
   }, [])
-  
-  const categories = [
-    "restaurant", "cafe", "gym", "salon", "clinic",
-    "real-estate", "hotel", "portfolio", "agency",
-    "saas", "ecommerce", "education", "photography", "local-business"
-  ]
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = (e: FormEvent) => {
     e.preventDefault()
-    router.push(`/websites?search=${encodeURIComponent(searchQuery)}&category=${selectedCategory || ""}`)
+    router.push(`/websites?search=${encodeURIComponent(searchQuery)}`)
   }
 
-  const handleCategoryFilter = (category: string) => {
-    setSelectedCategory(category)
-    router.push(`/websites?category=${category}&search=${encodeURIComponent(searchQuery)}&sort=${sortBy}`)
-  }
+  const featured = demos.filter((d) => d.featured).slice(0, 8)
+  const filteredDemos = selectedCategory
+    ? demos.filter((d) => d.category === selectedCategory)
+    : demos.slice(0, 8)
+
+  const heroDemo = demos.find((d) => d.featured) ?? demos[0]
 
   return (
     <main className="flex-1">
-      {/* Header */}
-      <header className="border-b border-border bg-background/80 backdrop-blur-sm fixed w-full top-0 left-0 right-0 z-50">
-        <div className="max-w-7xl mx-auto h-16 flex items-center justify-between px-6">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center">
-              <svg className="h-6 w-6 text-primary-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7l7 9z" />
-              </svg>
-            </div>
-            <h1 className="text-xl font-semibold tracking-tight">WebForge</h1>
-          </div>
-          <div className="flex items-center gap-4">
-            <Button 
-              variant="outline" 
-              onClick={() => router.push("/signup")}
-              className="px-4 py-2"
-            >
-              Get Started
-            </Button>
-            <Button 
-              variant="default"
-              onClick={() => setShowLogin(true)}
-              className="px-4 py-2"
-            >
-              Sign In
-            </Button>
-          </div>
-        </div>
-      </header>
+      <Navbar />
 
-      {/* Hero Section */}
-      <section className="min-h-screen relative flex items-center justify-center overflow-hidden pt-20 pb-24">
-        <div className="absolute inset-0">
-          {/* Abstract background shapes */}
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-accent/10 transform -rotate-6 opacity-50 dark:opacity-20"></div>
-          <div className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full bg-primary/5 transform opacity-30 dark:opacity-10"></div>
+      {/* ============ HERO ============ */}
+      <section className="relative overflow-hidden pb-20 pt-36">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute left-1/2 top-0 h-[500px] w-[900px] -translate-x-1/2 rounded-full bg-amber-500/10 blur-[120px]" />
+          <div className="absolute -right-40 top-40 h-96 w-96 rounded-full bg-orange-600/10 blur-[100px]" />
+          <div className="absolute -left-40 top-80 h-96 w-96 rounded-full bg-amber-400/5 blur-[100px]" />
         </div>
-        
-        <div className="max-w-7xl mx-auto text-center px-6 relative">
-          <div className="animate-fade-in-up from-opacity-0 transition-all duration-1000">
-            <p className="text-accent text-sm font-medium tracking-widest uppercase mb-6">
-              Your Website. Picked, Paid, Built.
+
+        <div className="relative mx-auto max-w-7xl px-6">
+          <div className="mx-auto max-w-3xl text-center">
+            <div className="animate-fade-in-up mx-auto inline-flex items-center gap-2 rounded-full border border-amber-400/20 bg-amber-400/10 px-4 py-1.5 text-xs font-medium text-amber-300">
+              <Sparkles className="h-3.5 w-3.5" />
+              Productized websites · Fixed pricing · Fast delivery
+            </div>
+
+            <h1 className="animate-fade-in-up mt-6 text-5xl font-bold leading-[1.05] tracking-tight text-white md:text-7xl">
+              Your business online,
+              <br />
+              <span className="text-gradient-amber">without endless meetings.</span>
+            </h1>
+
+            <p className="animate-fade-in-up mx-auto mt-6 max-w-xl text-lg leading-relaxed text-zinc-400">
+              Choose a professionally designed template, customize your package, submit your
+              requirements — and we build it. No calls. No quotes. No surprises.
             </p>
-            <h2 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight mb-6">
-              Choose a design, customize your package, 
-              <span className="italic">submit your requirements</span>,
-              and get your business online
-            </h2>
-            <p className="text-zinc-600 dark:text-zinc-400 text-lg max-w-2xl mx-auto mb-10">
-              &quot;Choose a design, customize your package, submit your requirements, and get your business online without endless meetings.&quot;
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center sm:justify-start">
-              <Button 
-                onClick={() => router.push("/websites")}
-                className="flex-1 sm:max-w-200 py-3 px-6 text-lg font-medium"
-              >
-                Browse Websites
+
+            <form
+              onSubmit={handleSearch}
+              className="animate-fade-in-up mx-auto mt-10 flex max-w-xl items-center gap-2 rounded-2xl glass p-2 shadow-card"
+            >
+              <Search className="ml-3 h-5 w-5 shrink-0 text-zinc-500" />
+              <input
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search templates — gym, salon, restaurant..."
+                className="h-11 w-full bg-transparent px-2 text-sm text-white outline-none placeholder:text-zinc-500"
+              />
+              <Button type="submit" size="lg" className="shrink-0">
+                Search
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
-              <Button 
-                variant="outline"
-                onClick={() => router.push("/packages")}
-                className="flex-1 sm:max-w-200 py-3 px-6 text-lg font-medium"
-              >
-                View Packages
-              </Button>
+            </form>
+
+            <div className="animate-fade-in-up mx-auto mt-10 flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
+              {[
+                { value: "250+", label: "websites shipped" },
+                { value: "4.9/5", label: "average rating" },
+                { value: "3 days", label: "avg. turnaround" },
+              ].map((s) => (
+                <div key={s.label} className="text-center">
+                  <div className="text-2xl font-bold text-white">{s.value}</div>
+                  <div className="mt-1 text-xs text-zinc-500">{s.label}</div>
+                </div>
+              ))}
             </div>
           </div>
-          
-          {/* Demo Preview in Hero */}
-          <div className="hidden sm:block animate-fade-in delay-400">
-            <div className="mt-16 max-w-2xl mx-auto rounded-2xl overflow-hidden shadow-2xl">
-              <div className="relative h-64">
-                <img 
-                  src="/demos/gym-premium.jpg" 
-                  alt="Gym premium website demo" 
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute bottom-4 left-4 right-4 flex justify-between items-center px-4">
-                  <span className="text-white font-medium">₹7,999 - ₹29,999</span>
-                  <Button 
-                    size="icon" 
-                    variant="ghost"
-                    aria-label="Preview website"
-                  >
-                    <Eye className="h-4 w-4 text-white" />
-                  </Button>
+
+          {/* Browser mockup */}
+          <div className="animate-fade-in-up relative mx-auto mt-16 max-w-4xl" style={{ animationDelay: "0.15s" }}>
+            <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#101014] shadow-[0_40px_120px_-30px_rgba(0,0,0,0.8)]">
+              <div className="flex items-center gap-2 border-b border-white/5 bg-[#141419] px-4 py-3">
+                <span className="h-3 w-3 rounded-full bg-red-500/70" />
+                <span className="h-3 w-3 rounded-full bg-yellow-500/70" />
+                <span className="h-3 w-3 rounded-full bg-green-500/70" />
+                <div className="mx-auto flex h-7 w-full max-w-sm items-center justify-center rounded-lg bg-white/5 text-[11px] text-zinc-500">
+                  webforge.app/preview/{heroDemo?.slug ?? "premium-gym"}
+                </div>
+              </div>
+              <img
+                src={heroDemo?.thumbnail ?? "/demos/gym-premium.svg"}
+                alt={heroDemo?.name ?? "Website preview"}
+                className="h-[420px] w-full object-cover md:h-[520px]"
+              />
+            </div>
+
+            <div className="animate-float absolute -left-4 top-24 hidden rounded-2xl border border-white/10 bg-[#131318]/90 px-5 py-4 shadow-card backdrop-blur lg:block">
+              <div className="text-xs text-zinc-500">Starting at</div>
+              <div className="mt-1 text-2xl font-bold text-white">
+                ₹{formatPrice(heroDemo?.price ?? 7999)}
+              </div>
+              <div className="mt-1 text-xs text-emerald-400">Included + tax</div>
+            </div>
+
+            <div className="animate-float absolute -right-6 bottom-16 hidden rounded-2xl border border-white/10 bg-[#131318]/90 px-5 py-4 shadow-card backdrop-blur lg:block" style={{ animationDelay: "1.5s" }}>
+              <div className="flex items-center gap-2">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-400/15 text-amber-400">
+                  <Zap className="h-4 w-4" />
+                </span>
+                <div>
+                  <div className="text-sm font-semibold text-white">Delivery in 5 days</div>
+                  <div className="text-xs text-zinc-500">Design + content included</div>
                 </div>
               </div>
             </div>
@@ -146,209 +240,330 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Featured Websites Section */}
-      <section className="py-24 bg-background">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">Featured Websites</h2>
-            <p className="text-zinc-600">Browse our curated collection of professionally designed website demos</p>
-          </div>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {demos.map((demo) => {
-              // Filter by category and featured
-              if (selectedCategory && demo.category !== selectedCategory) return null
-              if (sortBy === "price-low" && demo.price > (demos[0]?.price || 0)) return null
-              if (sortBy === "price-high") return null // simplified
-              
-              const isFeatured = demo.featured && (!selectedCategory || demo.category === selectedCategory)
-              
-              return (
-                <div 
-                  key={demo.id} 
-                  className={`group rounded-xl overflow-hidden hover:shadow-xl transition-shadow duration-300 ${isFeatured ? "border-2 border-primary/20" : ""}`} 
-                  onMouseEnter={() => router.push(`/websites/${demo.slug}`)}
-                >
-                  <div className="relative h-64">
-                    <img 
-                      src={demo.thumbnail} 
-                      alt={demo.name} 
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                    <div className="absolute bottom-0 left-0 right-4 bg-black/60 backdrop-blur-sm p-3">
-                      <span className="text-white font-medium">₹{demo.price}</span>
-                      <Button 
-                        size="icon" 
-                        variant="ghost" 
-                        className="hidden sm:block"
-                        aria-label="Preview website"
-                      >
-                        <Eye className="h-4 w-4 text-white" />
-                      </Button>
-                    </div>
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-medium line-clamp-2">{demo.name}</h3>
-                    <p className="text-sm text-zinc-500 line-clamp-2 mt-2">{demo.description}</p>
-                    <div className="mt-3 flex items-center justify-between">
-                      <span className="text-accent font-medium">₹{demo.price}</span>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="text-xs"
-                        aria-label="Get this website"
-                      >
-                        Get
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
+      {/* ============ MARQUEE ============ */}
+      <section className="border-y border-white/5 bg-[#0b0b0e] py-6">
+        <div className="mask-fade-x overflow-hidden">
+          <div className="animate-marquee flex w-max items-center gap-10">
+            {[...seedCategories, ...seedCategories].map((c, i) => (
+              <span key={`${c.id}-${i}`} className="flex items-center gap-10 text-sm font-medium text-zinc-500">
+                {c.name}
+                <span className="h-1 w-1 rounded-full bg-amber-500/50" />
+              </span>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section className="py-24 bg-muted/50">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+      {/* ============ FEATURED WEBSITES ============ */}
+      <section className="py-24">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
             <div>
-              <h2 className="text-4xl font-bold mb-6">How It Works</h2>
-              <div className="space-y-4">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-                    <span className="text-white font-bold">01</span>
-                  </div>
-                  <div>
-                    <h3 className="font-medium">Choose a design</h3>
-                    <p className="text-zinc-500">Browse our curated collection of website demos and pick the one that fits your business</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 mt-6">
-                  <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center flex-shrink-0">
-                    <span className="text-white font-bold">02</span>
-                  </div>
-                  <div>
-                    <h3 className="font-medium">Customize your package</h3>
-                    <p className="text-zinc-500">Select add-ons, domain setup, and hosting to match your needs</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 mt-6">
-                  <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center flex-shrink-0">
-                    <span className="text-white font-bold">03</span>
-                  </div>
-                  <div>
-                    <h3 className="font-medium">Submit requirements</h3>
-                    <p className="text-zinc-500">Enter your business information, upload assets, and specify your needs</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 mt-6">
-                  <div className="w-12 h-12 rounded-full bg-green-600 flex items-center justify-center flex-shrink-0">
-                    <span className="text-white font-bold">04</span>
-                  </div>
-                  <div>
-                    <h3 className="font-medium">Pay securely</h3>
-                    <p className="text-zinc-500">Use Razorpay for secure online payment</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 mt-6">
-                  <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
-                    <span className="text-white font-bold">05</span>
-                  </div>
-                  <div>
-                    <h3 className="font-medium">We build it</h3>
-                    <p className="text-zinc-500">Our developers get to work on your website with clear requirements</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4 mt-6">
-                  <div className="w-12 h-12 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0">
-                    <span className="text-white font-bold">06</span>
-                  </div>
-                  <div>
-                    <h3 className="font-medium">Launch</h3>
-                    <p className="text-zinc-500">Receive your completed website and go live</p>
-                  </div>
-                </div>
-              </div>
+              <div className="text-xs font-semibold uppercase tracking-widest text-amber-400">Templates</div>
+              <h2 className="mt-3 text-4xl font-bold tracking-tight text-white md:text-5xl">
+                Designs that close your customers
+              </h2>
+              <p className="mt-4 max-w-xl text-zinc-400">
+                Every template is built to convert — clear calls-to-action, fast loading, and
+                mobile-first layouts. Pick one and we customise it for your business.
+              </p>
             </div>
-            <div className="hidden lg:block">
-              <div className="rounded-2xl overflow-hidden shadow-2xl">
-                <img 
-                  src="/demos/hotel-ocean.jpg" 
-                  alt="How it works illustration" 
-                  className="w-full h-96 object-cover"
-                />
-              </div>
-            </div>
+            <Button asChild variant="outline">
+              <Link href="/websites">
+                View all templates
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+
+          <div className="mt-10 flex flex-wrap gap-2">
+            <button
+              onClick={() => setSelectedCategory(null)}
+              className={`rounded-full border px-4 py-1.5 text-sm transition-colors ${
+                selectedCategory === null
+                  ? "border-amber-400/40 bg-amber-400/10 text-amber-300"
+                  : "border-white/10 text-zinc-400 hover:border-white/25 hover:text-white"
+              }`}
+            >
+              All
+            </button>
+            {seedCategories.slice(0, 6).map((c) => (
+              <button
+                key={c.id}
+                onClick={() => setSelectedCategory(selectedCategory === c.id ? null : c.id)}
+                className={`rounded-full border px-4 py-1.5 text-sm transition-colors ${
+                  selectedCategory === c.id
+                    ? "border-amber-400/40 bg-amber-400/10 text-amber-300"
+                    : "border-white/10 text-zinc-400 hover:border-white/25 hover:text-white"
+                }`}
+              >
+                {c.name}
+              </button>
+            ))}
+          </div>
+
+          <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {(selectedCategory ? filteredDemos : featured).map((demo) => (
+              <Link
+                key={demo.id}
+                href={`/websites/${demo.slug}`}
+                className="group overflow-hidden rounded-2xl border border-white/5 bg-[#101014] transition-all duration-300 hover:-translate-y-1 hover:border-amber-400/30 hover:shadow-[0_20px_60px_-20px_rgba(245,158,11,0.25)]"
+              >
+                <div className="relative aspect-[8/5] overflow-hidden">
+                  <img
+                    src={demo.thumbnail}
+                    alt={demo.name}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute left-3 top-3 rounded-full border border-white/10 bg-black/60 px-3 py-1 text-xs font-medium text-white backdrop-blur">
+                    {demo.category}
+                  </div>
+                </div>
+                <div className="p-5">
+                  <h3 className="font-semibold text-white">{demo.name}</h3>
+                  <p className="mt-1 line-clamp-2 text-sm text-zinc-500">{demo.description}</p>
+                  <div className="mt-4 flex items-center justify-between">
+                    <span className="text-lg font-bold text-amber-400">₹{formatPrice(demo.price)}</span>
+                    <span className="flex items-center gap-1 text-xs font-medium text-amber-300 opacity-0 transition-opacity group-hover:opacity-100">
+                      Customise
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </span>
+                  </div>
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Popular Industries */}
-      <section className="py-24 bg-background">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4">Popular Industries</h2>
-            <p className="text-zinc-600">We&apos;ve designed websites for these businesses</p>
+      {/* ============ HOW IT WORKS ============ */}
+      <section id="how-it-works" className="relative border-y border-white/5 bg-[#0b0b0e] py-24">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="mx-auto max-w-2xl text-center">
+            <div className="text-xs font-semibold uppercase tracking-widest text-amber-400">Process</div>
+            <h2 className="mt-3 text-4xl font-bold tracking-tight text-white md:text-5xl">
+              From template to live website in 5 days
+            </h2>
+            <p className="mt-4 text-zinc-400">
+              A dead-simple process. You do the easy parts, we do the heavy lifting.
+            </p>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
+
+          <div className="mt-16 grid gap-6 md:grid-cols-4">
             {[
-
-              { name: "Restaurant", count: "47", icon: "utensils", color: "red" },
-              { name: "Gym", count: "34", icon: "dumbbell", color: "green" },
-              { name: "Salon", count: "28", icon: "scissors", color: "purple" },
-              { name: "Clinic", count: "23", icon: "stethoscope", color: "blue" },
-              { name: "Real Estate", count: "38", icon: "building", color: "orange" },
-              { name: "Hotel", count: "19", icon: " hotel", color: "teal" },
-              { name: "Agency", count: "31", icon: "palette", color: "fuchsia" },
-              { name: "SaaS", count: "42", icon: "server", color: "emerald" },
-
-            ].map((industry) => (
-              <div 
-                key={industry.name} 
-                className="p-4 rounded-xl text-center hover:bg-primary/5 transition-colors duration-300"
+              {
+                icon: Palette,
+                step: "01",
+                title: "Pick a design",
+                desc: "Browse templates and choose the one that fits your business.",
+              },
+              {
+                icon: Zap,
+                step: "02",
+                title: "Customise your package",
+                desc: "Pick a plan and add-ons — pages, booking, payments, blog.",
+              },
+              {
+                icon: ClipboardList,
+                step: "03",
+                title: "Fill one simple form",
+                desc: "Tell us about your business, upload your logo and photos.",
+              },
+              {
+                icon: Rocket,
+                step: "04",
+                title: "We build & launch",
+                desc: "Pay securely online and get your finished website in days.",
+              },
+            ].map((s, i) => (
+              <div
+                key={s.step}
+                className="group relative rounded-2xl border border-white/5 bg-[#101014] p-7 transition-all duration-300 hover:border-amber-400/25"
               >
-                <div className="w-12 h-12 rounded-full mx-auto mb-3 flex items-center justify-center">
-                  <svg className={`h-6 w-6 text-${industry.color}60`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6l4 4" />
-                  </svg>
+                <div className="text-xs font-semibold text-zinc-600">Step {s.step}</div>
+                <div className="mt-4 flex h-11 w-11 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 transition-colors group-hover:bg-amber-400 group-hover:text-[#0b0b0b]">
+                  <s.icon className="h-5 w-5" />
                 </div>
-                <h4 className="font-medium mb-1">{industry.name}</h4>
-                <p className="text-xs text-zinc-500">{industry.count}+ websites</p>
+                <h3 className="mt-5 text-lg font-semibold text-white">{s.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-zinc-500">{s.desc}</p>
+                {i < 3 && (
+                  <div className="absolute -right-4 top-1/2 hidden h-px w-8 bg-gradient-to-r from-amber-400/40 to-transparent md:block" />
+                )}
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent"></div>
-        <div className="max-w-4xl mx-auto px-6 text-center relative">
-          <div className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 md:p-12 max-w-2xl mx-auto">
-            <h2 className="text-4xl font-bold mb-4">Ready to get online?</h2>
-            <p className="text-zinc-600 mb-8 max-w-2xl mx-auto">
-              Join hundreds of businesses that have gotten their website through WebForge. No sales calls, no endless meetings.
+      {/* ============ INDUSTRIES ============ */}
+      <section className="py-24">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="mx-auto max-w-2xl text-center">
+            <div className="text-xs font-semibold uppercase tracking-widest text-amber-400">Industries</div>
+            <h2 className="mt-3 text-4xl font-bold tracking-tight text-white md:text-5xl">
+              Built for your kind of business
+            </h2>
+            <p className="mt-4 text-zinc-400">
+              From restaurants to SaaS — templates designed for your industry&apos;s customers.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center sm:justify-start">
-              <Button 
-                onClick={() => router.push("/websites")}
-                className="flex-1 sm:max-w-200 py-3 px-6 text-lg font-medium"
+          </div>
+
+          <div className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {seedCategories.map((c) => {
+              const Icon = categoryIcons[c.id] ?? Store
+              const count = demos.filter((d) => d.category === c.id).length
+              return (
+                <Link
+                  key={c.id}
+                  href={`/websites?category=${c.id}`}
+                  className="group rounded-2xl border border-white/5 bg-[#101014] p-6 transition-all duration-300 hover:-translate-y-0.5 hover:border-amber-400/30"
+                >
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-white/5 text-zinc-400 transition-colors group-hover:bg-amber-400/15 group-hover:text-amber-400">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="mt-4 font-semibold text-white">{c.name}</h3>
+                  <p className="mt-1 text-xs text-zinc-500">{count} template{count === 1 ? "" : "s"}</p>
+                </Link>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ============ PRICING ============ */}
+      <section id="packages" className="relative border-y border-white/5 bg-[#0b0b0e] py-24">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="mx-auto max-w-2xl text-center">
+            <div className="text-xs font-semibold uppercase tracking-widest text-amber-400">Pricing</div>
+            <h2 className="mt-3 text-4xl font-bold tracking-tight text-white md:text-5xl">
+              One price. Nothing hidden.
+            </h2>
+            <p className="mt-4 text-zinc-400">
+              Every package includes the template, customisation, and your content. Pay online via
+              UPI QR — securely, once, and done.
+            </p>
+          </div>
+
+          <div className="mt-14 grid gap-6 lg:grid-cols-3">
+            {packages.map((p) => (
+              <div
+                key={p.id}
+                className={`relative flex flex-col rounded-2xl border p-8 transition-all duration-300 ${
+                  p.popular
+                    ? "border-amber-400/40 bg-[#131318] shadow-[0_0_60px_-20px_rgba(245,158,11,0.4)]"
+                    : "border-white/5 bg-[#101014] hover:border-white/15"
+                }`}
               >
-                Browse Websites
+                {p.popular && (
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-amber-gradient px-4 py-1 text-xs font-bold text-[#0b0b0b]">
+                    Most popular
+                  </div>
+                )}
+                <h3 className="text-lg font-semibold text-white">{p.name}</h3>
+                <p className="mt-1 text-sm text-zinc-500">{p.tagline}</p>
+                <div className="mt-6 flex items-baseline gap-1">
+                  <span className="text-4xl font-bold text-white">{p.price}</span>
+                  <span className="text-sm text-zinc-500">one-time</span>
+                </div>
+                <ul className="mt-8 space-y-3">
+                  {p.features.map((f) => (
+                    <li key={f} className="flex items-start gap-3 text-sm text-zinc-300">
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
+                      {f}
+                    </li>
+                  ))}
+                </ul>
+                <Button asChild className="mt-8 w-full" variant={p.popular ? "default" : "outline"}>
+                  <Link href={`/checkout?package=${p.id}`}>
+                    {p.popular ? "Get started" : "Choose plan"}
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-6 text-xs text-zinc-500">
+            <span className="flex items-center gap-2">
+              <ShieldCheck className="h-4 w-4 text-amber-400" /> Scan &amp; pay via UPI
+            </span>
+            <span className="flex items-center gap-2">
+              <Check className="h-4 w-4 text-amber-400" /> Domain & hosting setup included
+            </span>
+            <span className="flex items-center gap-2">
+              <Check className="h-4 w-4 text-amber-400" /> Free revisions for 30 days
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* ============ TESTIMONIALS ============ */}
+      <section id="testimonials" className="py-24">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="mx-auto max-w-2xl text-center">
+            <div className="text-xs font-semibold uppercase tracking-widest text-amber-400">Reviews</div>
+            <h2 className="mt-3 text-4xl font-bold tracking-tight text-white md:text-5xl">
+              Businesses love their new websites
+            </h2>
+          </div>
+
+          <div className="mt-14 grid gap-6 md:grid-cols-3">
+            {testimonials.map((t) => (
+              <div
+                key={t.name}
+                className="flex flex-col rounded-2xl border border-white/5 bg-[#101014] p-7"
+              >
+                <Quote className="h-6 w-6 text-amber-400/60" />
+                <p className="mt-4 flex-1 text-sm leading-relaxed text-zinc-300">{t.quote}</p>
+                <div className="mt-6 flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-400/15 text-sm font-bold text-amber-300">
+                    {t.name.charAt(0)}
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-white">{t.name}</div>
+                    <div className="text-xs text-zinc-500">{t.role}</div>
+                  </div>
+                </div>
+                <div className="mt-4 flex gap-0.5">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============ CTA ============ */}
+      <section className="pb-24">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="relative overflow-hidden rounded-3xl border border-amber-400/20 bg-gradient-to-br from-amber-500/15 via-[#131318] to-[#101014] px-8 py-16 text-center md:px-16">
+            <div className="pointer-events-none absolute -left-20 -top-20 h-64 w-64 rounded-full bg-amber-500/15 blur-[90px]" />
+            <div className="pointer-events-none absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-orange-600/15 blur-[90px]" />
+            <h2 className="relative text-4xl font-bold tracking-tight text-white md:text-5xl">
+              Ready to get online?
+            </h2>
+            <p className="relative mx-auto mt-4 max-w-xl text-zinc-400">
+              Browse templates, customise your package, and go live within days. No meetings, no
+              quotes, no nonsense.
+            </p>
+            <div className="relative mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <Button asChild size="lg">
+                <Link href="/websites">
+                  Browse templates
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
               </Button>
-              <Button 
-                variant="outline"
-                onClick={() => router.push("/packages")}
-                className="flex-1 sm:max-w-200 py-3 px-6 text-lg font-medium"
-              >
-                View Packages
+              <Button asChild size="lg" variant="outline">
+                <Link href="/#how-it-works">How it works</Link>
               </Button>
             </div>
           </div>
         </div>
       </section>
+
+      <Footer />
     </main>
   )
 }
