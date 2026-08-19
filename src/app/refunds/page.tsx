@@ -30,17 +30,17 @@ export default function RefundsPage() {
 
       <section className="relative overflow-hidden pb-24 pt-36">
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-1/2 top-0 h-[300px] w-[600px] -translate-x-1/2 rounded-full bg-amber-500/10 blur-[120px]" />
+          <div className="absolute left-1/2 top-0 h-[300px] w-[600px] -translate-x-1/2 rounded-full bg-amber-100 blur-[120px]" />
         </div>
 
         <div className="relative mx-auto max-w-3xl px-6">
-          <div className="text-xs font-semibold uppercase tracking-widest text-amber-400">Legal</div>
-          <h1 className="mt-4 text-4xl font-bold tracking-tight text-white md:text-5xl">Refund policy</h1>
+          <div className="text-xs font-semibold uppercase tracking-widest text-amber-600">Legal</div>
+          <h1 className="mt-4 text-4xl font-bold tracking-tight text-zinc-900 md:text-5xl">Refund policy</h1>
           <p className="mt-3 text-sm text-zinc-500">Last updated: August 2026</p>
 
-          <div className="mt-6 flex items-start gap-3 rounded-2xl border border-amber-400/20 bg-amber-400/5 p-5">
-            <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-amber-400" />
-            <p className="text-sm leading-relaxed text-zinc-300">
+          <div className="mt-6 flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-5">
+            <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
+            <p className="text-sm leading-relaxed text-zinc-700">
               We want you to feel completely safe paying for your website. That&apos;s why we offer a
               48-hour full-refund window, and a 100% money-back guarantee if we ever fail to
               deliver your website as promised.
@@ -50,14 +50,14 @@ export default function RefundsPage() {
           <div className="mt-10 space-y-8">
             {cases.map((c) => (
               <div key={c.title}>
-                <h2 className="text-xl font-semibold text-white">{c.title}</h2>
-                <p className="mt-3 text-sm leading-relaxed text-zinc-400">{c.body}</p>
+                <h2 className="text-xl font-semibold text-zinc-900">{c.title}</h2>
+                <p className="mt-3 text-sm leading-relaxed text-zinc-500">{c.body}</p>
               </div>
             ))}
           </div>
 
-          <div className="mt-12 flex flex-col items-start gap-4 rounded-2xl border border-amber-400/20 bg-gradient-to-br from-amber-500/10 to-transparent p-6">
-            <p className="text-sm text-zinc-300">Need to request a refund or have questions?</p>
+          <div className="mt-12 flex flex-col items-start gap-4 rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-transparent p-6">
+            <p className="text-sm text-zinc-700">Need to request a refund or have questions?</p>
             <Button asChild variant="outline" size="sm">
               <Link href="/contact">
                 Contact us

@@ -64,20 +64,20 @@ export default function PrivacyPage() {
 
       <section className="relative overflow-hidden pb-24 pt-36">
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-1/2 top-0 h-[300px] w-[600px] -translate-x-1/2 rounded-full bg-amber-500/10 blur-[120px]" />
+          <div className="absolute left-1/2 top-0 h-[300px] w-[600px] -translate-x-1/2 rounded-full bg-amber-100 blur-[120px]" />
         </div>
 
         <div className="relative mx-auto max-w-3xl px-6">
-          <div className="text-xs font-semibold uppercase tracking-widest text-amber-400">Legal</div>
-          <h1 className="mt-4 text-4xl font-bold tracking-tight text-white md:text-5xl">Privacy policy</h1>
+          <div className="text-xs font-semibold uppercase tracking-widest text-amber-600">Legal</div>
+          <h1 className="mt-4 text-4xl font-bold tracking-tight text-zinc-900 md:text-5xl">Privacy policy</h1>
           <p className="mt-3 text-sm text-zinc-500">Last updated: August 2026</p>
 
           <div className="mt-10 space-y-8">
             {sections.map((s) => (
               <div key={s.title}>
-                <h2 className="text-xl font-semibold text-white">{s.title}</h2>
+                <h2 className="text-xl font-semibold text-zinc-900">{s.title}</h2>
                 {s.body.map((p, i) => (
-                  <p key={i} className="mt-3 text-sm leading-relaxed text-zinc-400">
+                  <p key={i} className="mt-3 text-sm leading-relaxed text-zinc-500">
                     {p}
                   </p>
                 ))}
@@ -85,8 +85,8 @@ export default function PrivacyPage() {
             ))}
           </div>
 
-          <div className="mt-12 flex flex-col items-start gap-4 rounded-2xl border border-amber-400/20 bg-gradient-to-br from-amber-500/10 to-transparent p-6">
-            <p className="text-sm text-zinc-300">Have questions about how we handle your data?</p>
+          <div className="mt-12 flex flex-col items-start gap-4 rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-transparent p-6">
+            <p className="text-sm text-zinc-700">Have questions about how we handle your data?</p>
             <Button asChild variant="outline" size="sm">
               <Link href="/contact">
                 Contact us

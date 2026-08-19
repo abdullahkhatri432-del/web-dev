@@ -18,7 +18,7 @@ export function Navbar() {
   const { user, loading } = useAuth()
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/5 bg-[#09090b]/70 backdrop-blur-xl">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-zinc-100 bg-white/70 backdrop-blur-xl">
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
         <Logo />
         <nav className="hidden items-center gap-8 md:flex">
@@ -26,7 +26,7 @@ export function Navbar() {
             <Link
               key={l.href}
               href={l.href}
-              className="text-sm text-zinc-400 transition-colors hover:text-white"
+              className="text-sm text-zinc-500 transition-colors hover:text-zinc-900"
             >
               {l.label}
             </Link>
@@ -36,7 +36,7 @@ export function Navbar() {
           {!loading && user ? (
             <Button asChild variant="ghost" size="sm">
               <Link href="/admin">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-400/15 text-xs font-bold text-amber-300">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-50 text-xs font-bold text-amber-600">
                   {(user.displayName || user.email || "U").charAt(0).toUpperCase()}
                 </span>
                 <span className="ml-1.5 hidden sm:inline">Dashboard</span>

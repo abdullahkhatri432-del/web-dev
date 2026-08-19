@@ -59,16 +59,16 @@ export default function FaqPage() {
 
       <section className="relative overflow-hidden pb-24 pt-36">
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-1/2 top-0 h-[400px] w-[700px] -translate-x-1/2 rounded-full bg-amber-500/10 blur-[120px]" />
+          <div className="absolute left-1/2 top-0 h-[400px] w-[700px] -translate-x-1/2 rounded-full bg-amber-100 blur-[120px]" />
         </div>
 
         <div className="relative mx-auto max-w-3xl px-6">
           <div className="text-center">
-            <div className="text-xs font-semibold uppercase tracking-widest text-amber-400">FAQ</div>
-            <h1 className="mt-4 text-4xl font-bold tracking-tight text-white md:text-6xl">
+            <div className="text-xs font-semibold uppercase tracking-widest text-amber-600">FAQ</div>
+            <h1 className="mt-4 text-4xl font-bold tracking-tight text-zinc-900 md:text-6xl">
               Frequently asked questions
             </h1>
-            <p className="mx-auto mt-4 max-w-xl text-zinc-400">
+            <p className="mx-auto mt-4 max-w-xl text-zinc-500">
               Everything you need to know about getting a website with WebForge. Can&apos;t find your
               answer? Message us and we&apos;ll help.
             </p>
@@ -81,30 +81,30 @@ export default function FaqPage() {
                 <div
                   key={i}
                   className={`overflow-hidden rounded-2xl border transition-colors ${
-                    isOpen ? "border-amber-400/30 bg-[#101014]" : "border-white/5 bg-[#101014]/60"
+                    isOpen ? "border-amber-200 bg-white" : "border-zinc-100 bg-white"
                   }`}
                 >
                   <button
                     onClick={() => setOpen(isOpen ? null : i)}
                     className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left"
                   >
-                    <span className="font-semibold text-white">{f.q}</span>
+                    <span className="font-semibold text-zinc-900">{f.q}</span>
                     <ChevronDown
-                      className={`h-5 w-5 shrink-0 text-amber-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
+                      className={`h-5 w-5 shrink-0 text-amber-600 transition-transform ${isOpen ? "rotate-180" : ""}`}
                     />
                   </button>
                   {isOpen && (
-                    <p className="px-6 pb-6 text-sm leading-relaxed text-zinc-400">{f.a}</p>
+                    <p className="px-6 pb-6 text-sm leading-relaxed text-zinc-500">{f.a}</p>
                   )}
                 </div>
               )
             })}
           </div>
 
-          <div className="mt-12 flex flex-col items-center gap-4 rounded-3xl border border-amber-400/20 bg-gradient-to-br from-amber-500/10 to-transparent px-8 py-10 text-center">
-            <MessageCircle className="h-8 w-8 text-amber-400" />
-            <h2 className="text-2xl font-bold text-white">Still have questions?</h2>
-            <p className="max-w-md text-sm text-zinc-400">
+          <div className="mt-12 flex flex-col items-center gap-4 rounded-3xl border border-amber-200 bg-gradient-to-br from-amber-50 to-transparent px-8 py-10 text-center">
+            <MessageCircle className="h-8 w-8 text-amber-600" />
+            <h2 className="text-2xl font-bold text-zinc-900">Still have questions?</h2>
+            <p className="max-w-md text-sm text-zinc-500">
               We reply within a few hours, Monday to Saturday.
             </p>
             <Button asChild>

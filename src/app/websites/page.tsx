@@ -86,12 +86,12 @@ function WebsitesBrowseContent() {
     <main className="flex-1">
       <Navbar />
 
-      <section className="border-b border-white/5 bg-[#0b0b0e] pb-10 pt-28">
+      <section className="border-b border-zinc-100 bg-zinc-50 pb-10 pt-28">
         <div className="mx-auto max-w-7xl px-6">
           <div className="max-w-2xl">
-            <div className="text-xs font-semibold uppercase tracking-widest text-amber-400">Templates</div>
-            <h1 className="mt-3 text-4xl font-bold tracking-tight text-white md:text-5xl">Browse websites</h1>
-            <p className="mt-3 text-zinc-400">
+            <div className="text-xs font-semibold uppercase tracking-widest text-amber-600">Templates</div>
+            <h1 className="mt-3 text-4xl font-bold tracking-tight text-zinc-900 md:text-5xl">Browse websites</h1>
+            <p className="mt-3 text-zinc-500">
               {filteredDemos.length} {filteredDemos.length === 1 ? "template" : "templates"} ready to customise for your business.
             </p>
           </div>
@@ -102,7 +102,7 @@ function WebsitesBrowseContent() {
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               placeholder="Search templates..."
-              className="h-11 w-full bg-transparent px-2 text-sm text-white outline-none placeholder:text-zinc-500"
+              className="h-11 w-full bg-transparent px-2 text-sm text-zinc-900 outline-none placeholder:text-zinc-500"
             />
             <Button type="submit" className="shrink-0">
               Search
@@ -118,8 +118,8 @@ function WebsitesBrowseContent() {
               onClick={() => handleCategoryChange(null)}
               className={`rounded-full border px-4 py-1.5 text-sm transition-colors ${
                 !category
-                  ? "border-amber-400/40 bg-amber-400/10 text-amber-300"
-                  : "border-white/10 text-zinc-400 hover:border-white/25 hover:text-white"
+                  ? "border-amber-300 bg-amber-50 text-amber-600"
+                  : "border-zinc-200 text-zinc-500 hover:border-zinc-300 hover:text-zinc-900"
               }`}
             >
               All
@@ -130,8 +130,8 @@ function WebsitesBrowseContent() {
                 onClick={() => handleCategoryChange(cat === category ? null : cat)}
                 className={`rounded-full border px-4 py-1.5 text-sm transition-colors ${
                   category === cat
-                    ? "border-amber-400/40 bg-amber-400/10 text-amber-300"
-                    : "border-white/10 text-zinc-400 hover:border-white/25 hover:text-white"
+                    ? "border-amber-300 bg-amber-50 text-amber-600"
+                    : "border-zinc-200 text-zinc-500 hover:border-zinc-300 hover:text-zinc-900"
                 }`}
               >
                 {catNames[cat] || cat}
@@ -144,7 +144,7 @@ function WebsitesBrowseContent() {
             <select
               value={sort}
               onChange={(e) => router.push(`/websites?category=${category || ""}&search=${encodeURIComponent(search)}&sort=${e.target.value}`)}
-              className="h-10 rounded-full border border-white/10 bg-[#101014] px-4 text-sm text-white outline-none focus:border-amber-400/50"
+              className="h-10 rounded-full border border-zinc-200 bg-white px-4 text-sm text-zinc-900 outline-none focus:border-amber-300"
             >
               <option value="featured">Featured first</option>
               <option value="price-low">Price: Low to high</option>
@@ -157,7 +157,7 @@ function WebsitesBrowseContent() {
           {filteredDemos.map((demo) => (
             <div
               key={demo.id}
-              className="group flex flex-col overflow-hidden rounded-2xl border border-white/5 bg-[#101014] transition-all duration-300 hover:-translate-y-1 hover:border-amber-400/30 hover:shadow-[0_20px_60px_-20px_rgba(245,158,11,0.25)]"
+              className="group flex flex-col overflow-hidden rounded-2xl border border-zinc-100 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-amber-200 "
             >
               <div className="relative aspect-[8/5] overflow-hidden">
                 <img
@@ -165,15 +165,15 @@ function WebsitesBrowseContent() {
                   alt={demo.name}
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
-                <div className="absolute left-3 top-3 rounded-full border border-white/10 bg-black/60 px-3 py-1 text-xs font-medium text-white backdrop-blur">
+                <div className="absolute left-3 top-3 rounded-full border border-white/20 bg-black/60 px-3 py-1 text-xs font-medium text-white backdrop-blur">
                   {demo.category}
                 </div>
               </div>
               <div className="flex flex-1 flex-col p-5">
-                <h3 className="font-semibold text-white">{demo.name}</h3>
+                <h3 className="font-semibold text-zinc-900">{demo.name}</h3>
                 <p className="mt-1 line-clamp-2 flex-1 text-sm text-zinc-500">{demo.description}</p>
                 <div className="mt-4 flex items-center justify-between">
-                  <span className="text-lg font-bold text-amber-400">₹{formatPrice(demo.price)}</span>
+                  <span className="text-lg font-bold text-amber-600">₹{formatPrice(demo.price)}</span>
                   <Button
                     size="sm"
                     onClick={() => router.push(`/checkout?demoId=${demo.id}`)}

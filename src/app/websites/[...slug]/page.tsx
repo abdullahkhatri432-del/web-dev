@@ -59,8 +59,8 @@ export default function WebsiteDetailPage() {
       <main className="flex-1">
         <Navbar />
         <div className="mx-auto max-w-4xl px-6 pt-40 text-center">
-          <h1 className="text-4xl font-bold text-white">Website not found</h1>
-          <p className="mx-auto mt-4 max-w-md text-zinc-400">
+          <h1 className="text-4xl font-bold text-zinc-900">Website not found</h1>
+          <p className="mx-auto mt-4 max-w-md text-zinc-500">
             We couldn&apos;t find the website you were looking for. It may have been moved or renamed.
           </p>
           <Button asChild className="mt-8">
@@ -81,26 +81,26 @@ export default function WebsiteDetailPage() {
 
       <section className="relative overflow-hidden pb-20 pt-32">
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-1/4 top-0 h-[400px] w-[700px] -translate-x-1/2 rounded-full bg-amber-500/10 blur-[120px]" />
-          <div className="absolute -right-32 top-40 h-72 w-72 rounded-full bg-orange-600/10 blur-[100px]" />
+          <div className="absolute left-1/4 top-0 h-[400px] w-[700px] -translate-x-1/2 rounded-full bg-amber-100 blur-[120px]" />
+          <div className="absolute -right-32 top-40 h-72 w-72 rounded-full bg-amber-100 blur-[100px]" />
         </div>
 
         <div className="relative mx-auto max-w-6xl px-6">
           <button
             onClick={() => router.push("/websites")}
-            className="flex items-center gap-2 text-sm text-zinc-400 transition-colors hover:text-white"
+            className="flex items-center gap-2 text-sm text-zinc-500 transition-colors hover:text-zinc-900"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to all websites
           </button>
 
           <div className="mt-8 grid gap-10 lg:grid-cols-2">
-            <div className="overflow-hidden rounded-3xl border border-white/10 bg-[#101014] shadow-card">
-              <div className="flex items-center gap-2 border-b border-white/5 bg-[#141419] px-4 py-3">
+            <div className="overflow-hidden rounded-3xl border border-zinc-200 bg-white shadow-card">
+              <div className="flex items-center gap-2 border-b border-zinc-100 bg-zinc-100 px-4 py-3">
                 <span className="h-3 w-3 rounded-full bg-red-500/70" />
                 <span className="h-3 w-3 rounded-full bg-yellow-500/70" />
                 <span className="h-3 w-3 rounded-full bg-green-500/70" />
-                <div className="mx-auto flex h-7 w-full max-w-xs items-center justify-center rounded-lg bg-white/5 text-[11px] text-zinc-500">
+                <div className="mx-auto flex h-7 w-full max-w-xs items-center justify-center rounded-lg bg-zinc-50 text-[11px] text-zinc-500">
                   webforge.app/preview/{demo.slug}
                 </div>
               </div>
@@ -109,26 +109,26 @@ export default function WebsiteDetailPage() {
 
             <div className="flex flex-col">
               <div className="flex flex-wrap items-center gap-3">
-                <span className="rounded-full border border-amber-400/25 bg-amber-400/10 px-3 py-1 text-xs font-medium text-amber-300">
+                <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs font-medium text-amber-600">
                   {demo.category}
                 </span>
                 {demo.featured && (
-                  <span className="flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-zinc-300">
-                    <Sparkles className="h-3 w-3 text-amber-400" />
+                  <span className="flex items-center gap-1 rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs font-medium text-zinc-700">
+                    <Sparkles className="h-3 w-3 text-amber-600" />
                     Featured
                   </span>
                 )}
               </div>
 
-              <h1 className="mt-4 text-4xl font-bold tracking-tight text-white md:text-5xl">{demo.name}</h1>
-              <p className="mt-3 text-lg font-bold text-amber-400">₹{formatPrice(demo.price)}</p>
-              <p className="mt-4 leading-relaxed text-zinc-400">{demo.description}</p>
+              <h1 className="mt-4 text-4xl font-bold tracking-tight text-zinc-900 md:text-5xl">{demo.name}</h1>
+              <p className="mt-3 text-lg font-bold text-amber-600">₹{formatPrice(demo.price)}</p>
+              <p className="mt-4 leading-relaxed text-zinc-500">{demo.description}</p>
 
-              <h3 className="mt-8 text-lg font-semibold text-white">What&apos;s included</h3>
+              <h3 className="mt-8 text-lg font-semibold text-zinc-900">What&apos;s included</h3>
               <ul className="mt-4 grid gap-3 sm:grid-cols-2">
                 {demo.features.map((feature) => (
-                  <li key={feature} className="flex items-start gap-2.5 text-sm text-zinc-300">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-amber-400" />
+                  <li key={feature} className="flex items-start gap-2.5 text-sm text-zinc-700">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
                     {feature}
                   </li>
                 ))}
@@ -138,7 +138,7 @@ export default function WebsiteDetailPage() {
                 {demo.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-zinc-400"
+                    className="rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs font-medium text-zinc-500"
                   >
                     {tag}
                   </span>
@@ -166,15 +166,15 @@ export default function WebsiteDetailPage() {
                 )}
               </div>
 
-              <div className="mt-8 flex flex-wrap items-center gap-6 border-t border-white/5 pt-6 text-xs text-zinc-500">
+              <div className="mt-8 flex flex-wrap items-center gap-6 border-t border-zinc-100 pt-6 text-xs text-zinc-500">
                 <span className="flex items-center gap-2">
-                  <ShieldCheck className="h-4 w-4 text-amber-400" /> Scan &amp; pay via UPI
+                  <ShieldCheck className="h-4 w-4 text-amber-600" /> Scan &amp; pay via UPI
                 </span>
                 <span className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-amber-400" /> Delivery in 3–5 days
+                  <Check className="h-4 w-4 text-amber-600" /> Delivery in 3–5 days
                 </span>
                 <span className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-amber-400" /> Domain &amp; hosting included
+                  <Check className="h-4 w-4 text-amber-600" /> Domain &amp; hosting included
                 </span>
               </div>
             </div>
@@ -182,14 +182,14 @@ export default function WebsiteDetailPage() {
 
           {demo.screenshots && demo.screenshots.length > 0 && (
             <div className="mt-20">
-              <h2 className="text-2xl font-bold tracking-tight text-white">Preview</h2>
+              <h2 className="text-2xl font-bold tracking-tight text-zinc-900">Preview</h2>
               <div className="mt-6 grid gap-6 md:grid-cols-2">
                 {demo.screenshots.map((src, i) => (
                   <div
                     key={i}
-                    className="overflow-hidden rounded-2xl border border-white/10 bg-[#101014]"
+                    className="overflow-hidden rounded-2xl border border-zinc-200 bg-white"
                   >
-                    <div className="flex items-center gap-2 border-b border-white/5 bg-[#141419] px-4 py-2.5">
+                    <div className="flex items-center gap-2 border-b border-zinc-100 bg-zinc-100 px-4 py-2.5">
                       <span className="h-2.5 w-2.5 rounded-full bg-red-500/70" />
                       <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/70" />
                       <span className="h-2.5 w-2.5 rounded-full bg-green-500/70" />
@@ -203,18 +203,18 @@ export default function WebsiteDetailPage() {
 
           {related.length > 0 && (
             <div className="mt-20">
-              <h2 className="text-2xl font-bold tracking-tight text-white">Similar websites</h2>
+              <h2 className="text-2xl font-bold tracking-tight text-zinc-900">Similar websites</h2>
               <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
                 {related.map((item) => (
                   <Link
                     key={item.id}
                     href={`/websites/${item.slug}`}
-                    className="group overflow-hidden rounded-2xl border border-white/5 bg-[#101014] transition-all duration-300 hover:-translate-y-1 hover:border-amber-400/30"
+                    className="group overflow-hidden rounded-2xl border border-zinc-100 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-amber-200"
                   >
                     <img src={item.thumbnail} alt={item.name} className="h-40 w-full object-cover" />
                     <div className="p-4">
-                      <h4 className="font-semibold text-white">{item.name}</h4>
-                      <p className="mt-1 text-sm font-bold text-amber-400">₹{formatPrice(item.price)}</p>
+                      <h4 className="font-semibold text-zinc-900">{item.name}</h4>
+                      <p className="mt-1 text-sm font-bold text-amber-600">₹{formatPrice(item.price)}</p>
                     </div>
                   </Link>
                 ))}

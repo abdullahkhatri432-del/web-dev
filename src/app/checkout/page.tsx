@@ -113,7 +113,7 @@ function CheckoutContent() {
   }
 
   const inputCls =
-    "mt-1 flex h-11 w-full rounded-xl border border-white/10 bg-card/60 px-4 py-2 text-sm text-white placeholder:text-zinc-500 outline-none transition-all focus:border-amber-400/50 focus:ring-2 focus:ring-ring/30"
+    "mt-1 flex h-11 w-full rounded-xl border border-zinc-200 bg-card/60 px-4 py-2 text-sm text-zinc-900 placeholder:text-zinc-500 outline-none transition-all focus:border-amber-300 focus:ring-2 focus:ring-ring/30"
 
   return (
     <main className="flex-1">
@@ -132,29 +132,29 @@ function CheckoutContent() {
                   <div
                     className={`flex h-9 w-9 items-center justify-center rounded-full border text-sm font-semibold transition-all ${
                       done
-                        ? "border-amber-400 bg-amber-400 text-[#0b0b0b]"
+                        ? "border-amber-400 bg-amber-400 text-zinc-900"
                         : active
-                          ? "border-amber-400/60 bg-amber-400/15 text-amber-300 ring-glow"
-                          : "border-white/10 bg-[#101014] text-zinc-500"
+                          ? "border-amber-300 bg-amber-50 text-amber-600 ring-glow"
+                          : "border-zinc-200 bg-white text-zinc-500"
                     }`}
                   >
                     {done ? <Check className="h-4 w-4" /> : num}
                   </div>
-                  <span className={`mt-2 hidden text-xs sm:block ${active ? "text-amber-300" : "text-zinc-500"}`}>
+                  <span className={`mt-2 hidden text-xs sm:block ${active ? "text-amber-600" : "text-zinc-500"}`}>
                     {label}
                   </span>
                 </div>
                 {i < STEPS.length - 1 && (
-                  <div className={`mx-2 mb-5 h-px flex-1 sm:mb-0 ${done ? "bg-amber-400/50" : "bg-white/10"}`} />
+                  <div className={`mx-2 mb-5 h-px flex-1 sm:mb-0 ${done ? "bg-amber-500" : "bg-zinc-100"}`} />
                 )}
               </div>
             )
           })}
         </div>
 
-        <div className="overflow-hidden rounded-3xl border border-white/5 bg-[#101014] shadow-card">
-          <div className="border-b border-white/5 bg-white/[0.02] px-8 py-5">
-            <h2 className="text-xl font-bold text-white">Step {step} · {STEPS[step - 1]}</h2>
+        <div className="overflow-hidden rounded-3xl border border-zinc-100 bg-white shadow-card">
+          <div className="border-b border-zinc-100 bg-zinc-50 px-8 py-5">
+            <h2 className="text-xl font-bold text-zinc-900">Step {step} · {STEPS[step - 1]}</h2>
           </div>
 
           <div className="p-8">
@@ -162,16 +162,16 @@ function CheckoutContent() {
               <div>
                 {demo ? (
                   <div className="grid gap-6 md:grid-cols-[240px_1fr]">
-                    <div className="overflow-hidden rounded-2xl border border-white/10">
+                    <div className="overflow-hidden rounded-2xl border border-zinc-200">
                       <img src={demo.thumbnail} alt={demo.name} className="h-full w-full object-cover" />
                     </div>
                     <div>
-                      <div className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-amber-300 inline-block">
+                      <div className="rounded-full border border-zinc-200 bg-zinc-50 px-3 py-1 text-xs font-medium text-amber-600 inline-block">
                         {demo.category}
                       </div>
-                      <h3 className="mt-3 text-2xl font-bold text-white">{demo.name}</h3>
-                      <p className="mt-2 text-zinc-400">{demo.description}</p>
-                      <p className="mt-4 text-2xl font-bold text-amber-400">₹{formatPrice(demo.price)}</p>
+                      <h3 className="mt-3 text-2xl font-bold text-zinc-900">{demo.name}</h3>
+                      <p className="mt-2 text-zinc-500">{demo.description}</p>
+                      <p className="mt-4 text-2xl font-bold text-amber-600">₹{formatPrice(demo.price)}</p>
                       <Button className="mt-6" onClick={nextStep}>
                         Select this design
                         <ArrowRight className="ml-2 h-4 w-4" />
@@ -197,22 +197,22 @@ function CheckoutContent() {
                     onClick={() => setFormData((prev) => ({ ...prev, packageId: key }))}
                     className={`cursor-pointer rounded-2xl border p-6 transition-all ${
                       formData.packageId === key
-                        ? "border-amber-400/50 bg-amber-400/5 ring-glow"
-                        : "border-white/10 bg-white/[0.02] hover:border-white/25"
+                        ? "border-amber-300 bg-amber-50 ring-glow"
+                        : "border-zinc-200 bg-zinc-50 hover:border-zinc-300"
                     }`}
                   >
-                    <h4 className="text-lg font-bold text-white">{pkg.name}</h4>
-                    <p className="mt-1 text-2xl font-bold text-amber-400">₹{formatPrice(pkg.price)}</p>
+                    <h4 className="text-lg font-bold text-zinc-900">{pkg.name}</h4>
+                    <p className="mt-1 text-2xl font-bold text-amber-600">₹{formatPrice(pkg.price)}</p>
                     <p className="mt-1 text-xs text-zinc-500">Starting price</p>
                     <ul className="mt-4 space-y-2">
                       {pkg.features.map((f) => (
-                        <li key={f} className="flex items-center gap-2 text-sm text-zinc-400">
-                          <Check className="h-3.5 w-3.5 text-amber-400" />
+                        <li key={f} className="flex items-center gap-2 text-sm text-zinc-500">
+                          <Check className="h-3.5 w-3.5 text-amber-600" />
                           {f}
                         </li>
                       ))}
-                      <li className="flex items-center gap-2 text-sm text-zinc-400">
-                        <Check className="h-3.5 w-3.5 text-amber-400" />
+                      <li className="flex items-center gap-2 text-sm text-zinc-500">
+                        <Check className="h-3.5 w-3.5 text-amber-600" />
                         {pkg.includedPages} pages included
                       </li>
                     </ul>
@@ -244,23 +244,23 @@ function CheckoutContent() {
                           }))
                         }}
                         className={`flex cursor-pointer items-center justify-between rounded-2xl border p-5 transition-all ${
-                          selected ? "border-amber-400/50 bg-amber-400/5" : "border-white/10 bg-white/[0.02] hover:border-white/25"
+                          selected ? "border-amber-300 bg-amber-50" : "border-zinc-200 bg-zinc-50 hover:border-zinc-300"
                         }`}
                       >
                         <div className="flex items-center gap-4">
                           <div
                             className={`flex h-6 w-6 items-center justify-center rounded-md border transition-colors ${
-                              selected ? "border-amber-400 bg-amber-400 text-[#0b0b0b]" : "border-white/20"
+                              selected ? "border-amber-400 bg-amber-400 text-zinc-900" : "border-zinc-300"
                             }`}
                           >
                             {selected && <Check className="h-4 w-4" />}
                           </div>
                           <div>
-                            <h4 className="font-semibold text-white">{a.name}</h4>
+                            <h4 className="font-semibold text-zinc-900">{a.name}</h4>
                             <p className="text-xs text-zinc-500">{a.desc}</p>
                           </div>
                         </div>
-                        <span className="font-semibold text-amber-400">+₹{formatPrice(a.price)}</span>
+                        <span className="font-semibold text-amber-600">+₹{formatPrice(a.price)}</span>
                       </div>
                     )
                   })}
@@ -294,7 +294,7 @@ function CheckoutContent() {
                     ] as Array<[keyof FormData, string]>
                   ).map(([key, label]) => (
                     <div key={key}>
-                      <label className="text-sm font-medium text-zinc-300">{label}</label>
+                      <label className="text-sm font-medium text-zinc-700">{label}</label>
                       <input
                         type="text"
                         className={inputCls}
@@ -320,7 +320,7 @@ function CheckoutContent() {
               <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
                 <div className="space-y-6">
                   <div>
-                    <h3 className="font-semibold text-white">What does your business do?</h3>
+                    <h3 className="font-semibold text-zinc-900">What does your business do?</h3>
                     <textarea
                       className={`${inputCls} min-h-[100px]`}
                       placeholder="e.g. We run a family restaurant in Jaipur and want to accept table reservations..."
@@ -329,7 +329,7 @@ function CheckoutContent() {
                     />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-white">Websites you like (URLs)</h3>
+                    <h3 className="font-semibold text-zinc-900">Websites you like (URLs)</h3>
                     <input
                       type="text"
                       className={inputCls}
@@ -339,12 +339,12 @@ function CheckoutContent() {
                     />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-white">Upload assets (logo, photos)</h3>
-                    <input type="file" onChange={onFileChange} className="mt-2 text-sm text-zinc-400 file:mr-3 file:rounded-full file:border-0 file:bg-amber-400/15 file:px-4 file:py-2 file:text-sm file:font-medium file:text-amber-300" />
+                    <h3 className="font-semibold text-zinc-900">Upload assets (logo, photos)</h3>
+                    <input type="file" onChange={onFileChange} className="mt-2 text-sm text-zinc-500 file:mr-3 file:rounded-full file:border-0 file:bg-amber-50 file:px-4 file:py-2 file:text-sm file:font-medium file:text-amber-600" />
                     {formData.uploadedFiles.length > 0 && (
                       <ul className="mt-3 space-y-1">
                         {formData.uploadedFiles.map((f) => (
-                          <li key={f.id} className="text-sm text-zinc-400">· {f.name}</li>
+                          <li key={f.id} className="text-sm text-zinc-500">· {f.name}</li>
                         ))}
                       </ul>
                     )}
@@ -356,31 +356,31 @@ function CheckoutContent() {
                   </div>
                 </div>
 
-                <div className="h-fit rounded-2xl border border-amber-400/20 bg-gradient-to-b from-amber-400/10 to-transparent p-6">
-                  <h3 className="text-lg font-bold text-white">Order summary</h3>
+                <div className="h-fit rounded-2xl border border-amber-200 bg-gradient-to-b from-amber-50 to-transparent p-6">
+                  <h3 className="text-lg font-bold text-zinc-900">Order summary</h3>
                   <dl className="mt-5 space-y-3 text-sm">
-                    <div className="flex justify-between text-zinc-400">
+                    <div className="flex justify-between text-zinc-500">
                       <dt>Design</dt>
-                      <dd className="text-white">₹{formatPrice(demo?.price ?? 0)}</dd>
+                      <dd className="text-zinc-900">₹{formatPrice(demo?.price ?? 0)}</dd>
                     </div>
-                    <div className="flex justify-between text-zinc-400">
+                    <div className="flex justify-between text-zinc-500">
                       <dt>Package ({PKG_OPTIONS[formData.packageId].name})</dt>
-                      <dd className="text-white">₹{formatPrice(pPrice)}</dd>
+                      <dd className="text-zinc-900">₹{formatPrice(pPrice)}</dd>
                     </div>
                     {formData.selectedAddons.length > 0 && (
-                      <div className="flex justify-between text-zinc-400">
+                      <div className="flex justify-between text-zinc-500">
                         <dt>Add-ons</dt>
-                        <dd className="text-white">₹{formatPrice(aPrice)}</dd>
+                        <dd className="text-zinc-900">₹{formatPrice(aPrice)}</dd>
                       </div>
                     )}
-                    <div className="flex justify-between text-zinc-400">
+                    <div className="flex justify-between text-zinc-500">
                       <dt>Tax (18%)</dt>
-                      <dd className="text-white">₹{formatPrice(tax)}</dd>
+                      <dd className="text-zinc-900">₹{formatPrice(tax)}</dd>
                     </div>
-                    <div className="border-t border-white/10 pt-3">
+                    <div className="border-t border-zinc-200 pt-3">
                       <div className="flex justify-between text-base font-bold">
-                        <dt className="text-white">Total</dt>
-                        <dd className="text-amber-400">₹{formatPrice(total)}</dd>
+                        <dt className="text-zinc-900">Total</dt>
+                        <dd className="text-amber-600">₹{formatPrice(total)}</dd>
                       </div>
                     </div>
                   </dl>
@@ -389,7 +389,7 @@ function CheckoutContent() {
                     Pay ₹{formatPrice(total)} via UPI
                   </Button>
                   <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-zinc-500">
-                    <ShieldCheck className="h-3.5 w-3.5 text-amber-400" />
+                    <ShieldCheck className="h-3.5 w-3.5 text-amber-600" />
                     Scan QR · Pay with any UPI app · {UPI_ID}
                   </p>
                   <p className="mt-1 text-center text-[11px] text-zinc-500">

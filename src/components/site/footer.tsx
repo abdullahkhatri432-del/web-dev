@@ -82,7 +82,7 @@ const socials = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-white/5 bg-[#0b0b0e]">
+    <footer className="border-t border-zinc-100 bg-zinc-50">
       <div className="mx-auto max-w-7xl px-6 py-16">
         <div className="grid gap-12 md:grid-cols-6">
           <div className="md:col-span-3">
@@ -97,7 +97,7 @@ export function Footer() {
                   key={s.label}
                   href="#"
                   aria-label={s.label}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 text-zinc-400 transition-colors hover:border-amber-400/40 hover:text-amber-400"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-200 text-zinc-500 transition-colors hover:border-amber-300 hover:text-amber-600"
                 >
                   <s.Icon className="h-4 w-4" />
                 </a>
@@ -106,13 +106,13 @@ export function Footer() {
           </div>
           {columns.map((col) => (
             <div key={col.title}>
-              <h4 className="text-sm font-semibold text-white">{col.title}</h4>
+              <h4 className="text-sm font-semibold text-zinc-900">{col.title}</h4>
               <ul className="mt-4 space-y-3">
                 {col.links.map((l) => (
                   <li key={l.label}>
                     <Link
                       href={l.href}
-                      className="text-sm text-zinc-500 transition-colors hover:text-amber-400"
+                      className="text-sm text-zinc-500 transition-colors hover:text-amber-600"
                     >
                       {l.label}
                     </Link>
@@ -123,7 +123,7 @@ export function Footer() {
           ))}
         </div>
       </div>
-      <div className="border-t border-white/5 py-6 text-center text-xs text-zinc-600">
+      <div className="border-t border-zinc-100 py-6 text-center text-xs text-zinc-500">
         © {new Date().getFullYear()} WebForge · Crafted with care in India
       </div>
     </footer>

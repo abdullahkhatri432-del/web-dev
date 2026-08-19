@@ -19,10 +19,10 @@ export default function AdminLayout({
 
   return (
     <div className="flex h-screen">
-      <aside className="flex w-64 flex-col border-r border-white/5 bg-[#0b0b0e]">
-        <div className="border-b border-white/5 p-6">
-          <Link href="/" className="text-lg font-bold text-white">
-            WebForge <span className="text-amber-400">Admin</span>
+      <aside className="flex w-64 flex-col border-r border-zinc-100 bg-zinc-50">
+        <div className="border-b border-zinc-100 p-6">
+          <Link href="/" className="text-lg font-bold text-zinc-900">
+            WebForge <span className="text-amber-600">Admin</span>
           </Link>
         </div>
         <nav className="flex-1 overflow-y-auto p-2">
@@ -31,16 +31,16 @@ export default function AdminLayout({
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-300 transition-colors hover:bg-white/5 hover:text-white"
+                  className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-zinc-700 transition-colors hover:bg-zinc-50 hover:text-zinc-900"
                 >
-                  <item.icon className="h-4 w-4 text-amber-400" />
+                  <item.icon className="h-4 w-4 text-amber-600" />
                   {item.label}
                 </Link>
               </li>
             ))}
           </ul>
         </nav>
-        <div className="border-t border-white/5 p-3">
+        <div className="border-t border-zinc-100 p-3">
           {user && (
             <p className="mb-2 truncate px-3 text-xs text-zinc-500">{user.email}</p>
           )}
@@ -53,7 +53,7 @@ export default function AdminLayout({
           <Button
             variant="ghost"
             size="sm"
-            className="mt-1 w-full justify-start text-zinc-400 hover:text-white"
+            className="mt-1 w-full justify-start text-zinc-500 hover:text-zinc-900"
             onClick={async () => {
               await signOut()
             }}
@@ -65,7 +65,7 @@ export default function AdminLayout({
       </aside>
 
       <div className="flex-1 overflow-y-auto">
-        <nav className="flex items-center justify-between border-b border-white/5 bg-[#0b0b0e]/70 px-8 py-4 backdrop-blur">
+        <nav className="flex items-center justify-between border-b border-zinc-100 bg-white/80 px-8 py-4 backdrop-blur">
           <Button variant="ghost" size="sm" onClick={() => window.history.back()}>
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back

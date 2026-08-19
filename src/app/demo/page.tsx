@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useState } from "react"
 import { useSearchParams } from "next/navigation"
+import Link from "next/link"
 import { Navbar } from "@/components/site/navbar"
 import { Footer } from "@/components/site/footer"
 import { Button } from "@/components/ui/button"
@@ -78,7 +79,7 @@ function DemoContent() {
         <div className="pt-40 text-center">
           <p className="text-zinc-500">No template selected.</p>
           <Button asChild className="mt-6">
-            <a href="/websites">Browse templates</a>
+            <Link href="/websites">Browse templates</Link>
           </Button>
         </div>
       </main>
@@ -103,7 +104,7 @@ function DemoContent() {
             <h1 className="mt-4 text-4xl font-bold tracking-tight text-zinc-900 md:text-5xl">
               See your website <span className="text-gradient-amber">in 3D</span>
             </h1>
-            <p className="mt-4 text-lg text-zinc-600">
+            <p className="mt-4 text-lg text-zinc-500">
               Rotate the template, add your business name, and imagine it live on your own domain.
               This is exactly what you&apos;ll get.
             </p>
@@ -116,7 +117,7 @@ function DemoContent() {
               className={`rounded-full border px-4 py-1.5 text-sm transition-colors ${
                 !category
                   ? "border-amber-500 bg-amber-50 text-amber-700"
-                  : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300"
+                  : "border-zinc-200 bg-white text-zinc-500 hover:border-zinc-300"
               }`}
             >
               All
@@ -128,7 +129,7 @@ function DemoContent() {
                 className={`rounded-full border px-4 py-1.5 text-sm transition-colors ${
                   category === c.id
                     ? "border-amber-500 bg-amber-50 text-amber-700"
-                    : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300"
+                    : "border-zinc-200 bg-white text-zinc-500 hover:border-zinc-300"
                 }`}
               >
                 {c.name}
@@ -169,16 +170,16 @@ function DemoContent() {
 
               <div className="mt-4 rounded-2xl border border-amber-200 bg-gradient-to-br from-amber-50 to-white p-5">
                 <div className="text-sm font-semibold text-zinc-900">Love this design?</div>
-                <p className="mt-1 text-xs leading-relaxed text-zinc-600">
+                <p className="mt-1 text-xs leading-relaxed text-zinc-500">
                   {currentIdxInFiltered >= 0
                     ? `${demo.name} · from ₹${demo.price.toLocaleString("en-IN")}`
                     : "Customise it to your business."}
                 </p>
                 <Button asChild className="mt-4 w-full" size="lg">
-                  <a href={`/checkout?demoId=${demo.id}`}>
+                  <Link href={`/checkout?demoId=${demo.id}`}>
                     Customise this design
                     <ArrowRight className="ml-2 h-4 w-4" />
-                  </a>
+                  </Link>
                 </Button>
                 <p className="mt-3 text-center text-[11px] text-zinc-500">
                   No advance to start · Pay when the design is approved

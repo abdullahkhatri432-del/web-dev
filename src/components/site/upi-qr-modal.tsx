@@ -152,8 +152,8 @@ export function UpiQrModal({ open, onClose, amount, demo, addonPrices, subtotal,
       <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-400">
         <BadgeCheck className="h-7 w-7" />
       </div>
-      <h3 className="mt-4 text-lg font-bold text-white">Payment details received</h3>
-      <p className="mt-2 max-w-sm text-sm text-zinc-400">
+      <h3 className="mt-4 text-lg font-bold text-zinc-900">Payment details received</h3>
+      <p className="mt-2 max-w-sm text-sm text-zinc-500">
         We will verify your UPI payment and confirm your order on WhatsApp / email within 15 minutes.
         No action needed from your side.
       </p>
@@ -163,28 +163,28 @@ export function UpiQrModal({ open, onClose, amount, demo, addonPrices, subtotal,
     </div>
   ) : (
     <div className="flex flex-col items-center text-center">
-      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-amber-400/15 text-amber-400">
+      <div className="flex h-11 w-11 items-center justify-center rounded-full bg-amber-50 text-amber-600">
         <QrCode className="h-5 w-5" />
       </div>
-      <h3 className="mt-4 text-lg font-bold text-white">Scan &amp; pay via UPI</h3>
-      <p className="mt-1 text-sm text-zinc-400">Amount payable</p>
-      <p className="mt-1 text-3xl font-bold text-amber-400">₹{amount.toLocaleString("en-IN")}</p>
+      <h3 className="mt-4 text-lg font-bold text-zinc-900">Scan &amp; pay via UPI</h3>
+      <p className="mt-1 text-sm text-zinc-500">Amount payable</p>
+      <p className="mt-1 text-3xl font-bold text-amber-600">₹{amount.toLocaleString("en-IN")}</p>
 
-      <div className="mt-5 rounded-2xl border border-white/10 bg-white p-3">
+      <div className="mt-5 rounded-2xl border border-zinc-200 bg-white p-3">
         {qrSvg ? (
           <div className="h-56 w-56" dangerouslySetInnerHTML={{ __html: qrSvg }} />
         ) : (
-          <div className="flex h-56 w-56 items-center justify-center text-sm text-zinc-400">
+          <div className="flex h-56 w-56 items-center justify-center text-sm text-zinc-500">
             Generating QR…
           </div>
         )}
       </div>
 
-      <div className="mt-4 flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2">
-        <span className="text-sm font-semibold text-white">{UPI_ID}</span>
+      <div className="mt-4 flex items-center gap-2 rounded-full border border-zinc-200 bg-zinc-50 px-4 py-2">
+        <span className="text-sm font-semibold text-zinc-900">{UPI_ID}</span>
         <button
           onClick={handleCopy}
-          className="flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-zinc-300 transition-colors hover:text-amber-400"
+          className="flex h-7 w-7 items-center justify-center rounded-full bg-zinc-100 text-zinc-700 transition-colors hover:text-amber-600"
           aria-label="Copy UPI ID"
         >
           {copied ? <Check className="h-3.5 w-3.5 text-emerald-400" /> : <Copy className="h-3.5 w-3.5" />}
@@ -208,10 +208,10 @@ export function UpiQrModal({ open, onClose, amount, demo, addonPrices, subtotal,
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full max-w-md rounded-3xl border border-white/10 bg-[#101014] p-6 shadow-card">
+      <div className="relative w-full max-w-md rounded-3xl border border-zinc-200 bg-white p-6 shadow-card">
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-zinc-400 transition-colors hover:bg-white/10 hover:text-white"
+          className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-zinc-50 text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-900"
           aria-label="Close"
         >
           <X className="h-4 w-4" />

@@ -1,6 +1,8 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
+import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { ArrowLeft, ArrowRight, MousePointer2 } from "lucide-react"
 import type { Demo, Package } from "@/services/firestore"
 
@@ -17,6 +19,7 @@ const PKG_FALLBACK: Record<string, { name: string; price: number }> = {
 }
 
 export function ThreeDPreview({ demo, allDemos, packages }: Props) {
+  const router = useRouter()
   const [businessName, setBusinessName] = useState("")
   const [pkgId, setPkgId] = useState<string>("business")
   const [rotateX, setRotateX] = useState(10)
@@ -25,7 +28,6 @@ export function ThreeDPreview({ demo, allDemos, packages }: Props) {
   const dragRef = useRef<{ x: number; y: number; rx: number; ry: number } | null>(null)
   const rafRef = useRef<number | null>(null)
 
-  const pkg = packages.find((p) => p.id === pkgId) || PKG_FALLBACK[pkgId]
   const domain = (businessName.trim() || "your-business").toLowerCase().replace(/\s+/g, "-") + ".com"
 
   const startIdle = useCallback(() => {
@@ -79,7 +81,7 @@ export function ThreeDPreview({ demo, allDemos, packages }: Props) {
   const idx = allDemos.findIndex((d) => d.id === demo.id)
   const go = (step: number) => {
     const next = allDemos[(idx + step + allDemos.length) % allDemos.length]
-    window.location.href = `/demo?demoId=${next.id}`
+    router.push(`/demo?demoId=${next.id}`)
   }
 
   return (
@@ -153,7 +155,7 @@ export function ThreeDPreview({ demo, allDemos, packages }: Props) {
           placeholder="Your business name"
           className="mt-3 h-11 w-full rounded-xl border border-zinc-200 bg-white px-4 text-center text-sm text-zinc-900 outline-none transition-all focus:border-amber-500 focus:ring-2 focus:ring-amber-200"
         />
-        <div className="mt-2 text-xs text-zinc-400">
+        <div className="mt-2 text-xs text-zinc-500">
           Your preview URL: <span className="font-mono text-amber-600">{domain}</span>
         </div>
       </div>
@@ -162,7 +164,7 @@ export function ThreeDPreview({ demo, allDemos, packages }: Props) {
       <div className="mt-6 flex items-center justify-center gap-3">
         <button
           onClick={() => go(-1)}
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-600 transition-colors hover:border-amber-500 hover:text-amber-600"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-500 transition-colors hover:border-amber-500 hover:text-amber-600"
           aria-label="Previous template"
         >
           <ArrowLeft className="h-5 w-5" />
@@ -172,7 +174,7 @@ export function ThreeDPreview({ demo, allDemos, packages }: Props) {
         </span>
         <button
           onClick={() => go(1)}
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-600 transition-colors hover:border-amber-500 hover:text-amber-600"
+          className="flex h-11 w-11 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-500 transition-colors hover:border-amber-500 hover:text-amber-600"
           aria-label="Next template"
         >
           <ArrowRight className="h-5 w-5" />

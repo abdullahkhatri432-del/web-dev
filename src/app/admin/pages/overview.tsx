@@ -79,27 +79,27 @@ export default function AdminOverviewPage() {
     <div className="p-6">
       <div className="mb-6 flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+          <h1 className="text-2xl font-bold text-zinc-900">Dashboard</h1>
           <p className="mt-1 text-sm text-zinc-500">Live data from your Firestore orders</p>
         </div>
         <Link
           href="/websites"
-          className="text-sm font-medium text-amber-400 hover:underline"
+          className="text-sm font-medium text-amber-600 hover:underline"
         >
           View website →
         </Link>
       </div>
 
       {error ? (
-        <div className="flex flex-col items-center rounded-2xl border border-white/5 bg-[#101014] py-16 text-center">
+        <div className="flex flex-col items-center rounded-2xl border border-zinc-100 bg-white py-16 text-center">
           <AlertCircle className="h-8 w-8 text-red-400" />
-          <p className="mt-3 text-sm text-zinc-400">
+          <p className="mt-3 text-sm text-zinc-500">
             Couldn&apos;t load orders from Firestore. Check that the backend env vars are set.
           </p>
         </div>
       ) : orders === null ? (
-        <div className="flex flex-col items-center rounded-2xl border border-white/5 bg-[#101014] py-16 text-center">
-          <Loader2 className="h-8 w-8 animate-spin text-amber-400" />
+        <div className="flex flex-col items-center rounded-2xl border border-zinc-100 bg-white py-16 text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-amber-600" />
           <p className="mt-3 text-sm text-zinc-500">Loading orders...</p>
         </div>
       ) : (
@@ -112,7 +112,7 @@ export default function AdminOverviewPage() {
               <CardContent>
                 <div className="flex items-baseline gap-2">
                   <div>
-                    <p className="text-3xl font-bold text-amber-400">₹{formatPrice(totalRevenue)}</p>
+                    <p className="text-3xl font-bold text-amber-600">₹{formatPrice(totalRevenue)}</p>
                     <p className="text-zinc-500">From {paidOrders.length} paid orders</p>
                   </div>
                   <IndianRupee className="h-6 w-6 text-amber-500" />
@@ -127,10 +127,10 @@ export default function AdminOverviewPage() {
               <CardContent>
                 <div className="flex items-baseline gap-2">
                   <div>
-                    <p className="text-3xl font-bold text-white">{orders.length}</p>
+                    <p className="text-3xl font-bold text-zinc-900">{orders.length}</p>
                     <p className="text-zinc-500">All-time orders</p>
                   </div>
-                  <ShoppingCart className="h-6 w-6 text-white/60" />
+                  <ShoppingCart className="h-6 w-6 text-zinc-900/60" />
                 </div>
               </CardContent>
             </Card>
@@ -152,19 +152,19 @@ export default function AdminOverviewPage() {
           </div>
 
           <div className="mt-8">
-            <h2 className="mb-4 text-xl font-bold text-white">
+            <h2 className="mb-4 text-xl font-bold text-zinc-900">
               Recent Orders {orders.length === 0 && <span className="text-sm font-normal text-zinc-500">— none yet, orders will appear here</span>}
             </h2>
 
             {orders.length === 0 ? (
-              <div className="rounded-2xl border border-white/5 bg-[#101014] py-16 text-center">
+              <div className="rounded-2xl border border-zinc-100 bg-white py-16 text-center">
                 <p className="text-zinc-500">No orders yet. Share your website link to start receiving orders.</p>
               </div>
             ) : (
-              <div className="overflow-x-auto rounded-2xl border border-white/5 bg-[#101014]">
+              <div className="overflow-x-auto rounded-2xl border border-zinc-100 bg-white">
                 <table className="min-w-full">
                   <thead>
-                    <tr className="border-b border-white/5 text-left">
+                    <tr className="border-b border-zinc-100 text-left">
                       <th className="p-4 text-xs font-medium uppercase tracking-wider text-zinc-500">Order</th>
                       <th className="p-4 text-xs font-medium uppercase tracking-wider text-zinc-500">Customer</th>
                       <th className="p-4 text-xs font-medium uppercase tracking-wider text-zinc-500">Amount</th>
@@ -176,10 +176,10 @@ export default function AdminOverviewPage() {
                     {recent.map((o) => {
                       const d = toDate(o.createdAt)
                       return (
-                        <tr key={o.id} className="border-b border-white/5 transition-colors hover:bg-white/[0.02]">
-                          <td className="p-4 text-sm text-zinc-300">{o.id.slice(-6).toUpperCase()}</td>
-                          <td className="p-4 text-sm text-white">{o.businessName || o.ownerName || "—"}</td>
-                          <td className="p-4 text-sm font-semibold text-amber-400">₹{formatPrice(o.total || 0)}</td>
+                        <tr key={o.id} className="border-b border-zinc-100 transition-colors hover:bg-zinc-50">
+                          <td className="p-4 text-sm text-zinc-700">{o.id.slice(-6).toUpperCase()}</td>
+                          <td className="p-4 text-sm text-zinc-900">{o.businessName || o.ownerName || "—"}</td>
+                          <td className="p-4 text-sm font-semibold text-amber-600">₹{formatPrice(o.total || 0)}</td>
                           <td className="p-4">{statusBadge(o.orderStatus)}</td>
                           <td className="p-4 text-sm text-zinc-500">
                             {d ? d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—"}
