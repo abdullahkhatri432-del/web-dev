@@ -9,7 +9,7 @@ export interface DialogProps extends React.ComponentPropsWithoutRef<"div"> {
 }
 
 const Dialog = React.forwardRef<HTMLDivElement, DialogProps>(
-  ({ className, children, ...props }, ref) => {
+  ({ children, ...props }, ref) => {
     return (
       <Slot
         ref={ref}

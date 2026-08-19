@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState, type ChangeEvent } from "react"
 import Link from "next/link"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import { ArrowLeft, ArrowRight, Check, ShieldCheck, QrCode } from "lucide-react"
 import { getDemoById, getPackage, getAddons } from "../../services/firestore"
 import type { Demo, Package, Addon } from "../../services/firestore"
@@ -38,7 +38,6 @@ function formatPrice(price: number) {
 }
 
 function CheckoutContent() {
-  const router = useRouter()
   const searchParams = useSearchParams()
   const demoId = searchParams.get("demoId")
   const prePkg = searchParams.get("package")
@@ -141,7 +140,7 @@ function CheckoutContent() {
                   >
                     {done ? <Check className="h-4 w-4" /> : num}
                   </div>
-                  <span className={`mt-2 hidden text-xs sm:block ${active ? "text-amber-300" : "text-zinc-600"}`}>
+                  <span className={`mt-2 hidden text-xs sm:block ${active ? "text-amber-300" : "text-zinc-500"}`}>
                     {label}
                   </span>
                 </div>
@@ -393,7 +392,7 @@ function CheckoutContent() {
                     <ShieldCheck className="h-3.5 w-3.5 text-amber-400" />
                     Scan QR · Pay with any UPI app · {UPI_ID}
                   </p>
-                  <p className="mt-1 text-center text-[11px] text-zinc-600">
+                  <p className="mt-1 text-center text-[11px] text-zinc-500">
                     No advance to start — pay only when the design is approved.
                   </p>
                 </div>

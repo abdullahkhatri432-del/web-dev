@@ -8,7 +8,6 @@ import {
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
   signOut as firebaseSignOut,
-  GoogleAuthProvider,
   type User,
 } from "firebase/auth"
 import { auth, googleProvider } from "../firebase/config"

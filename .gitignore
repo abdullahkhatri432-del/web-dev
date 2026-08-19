@@ -25,3 +25,5 @@ next-env.d.ts
 
 # Misc
 /build_output.txt
+.vercel
+.env*

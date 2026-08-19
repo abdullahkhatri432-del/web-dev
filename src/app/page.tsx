@@ -380,7 +380,7 @@ export default function HomePage() {
                 key={s.step}
                 className="group relative rounded-2xl border border-white/5 bg-[#101014] p-7 transition-all duration-300 hover:border-amber-400/25"
               >
-                <div className="text-xs font-semibold text-zinc-600">Step {s.step}</div>
+                <div className="text-xs font-semibold text-zinc-500">Step {s.step}</div>
                 <div className="mt-4 flex h-11 w-11 items-center justify-center rounded-xl bg-amber-400/10 text-amber-400 transition-colors group-hover:bg-amber-400 group-hover:text-[#0b0b0b]">
                   <s.icon className="h-5 w-5" />
                 </div>

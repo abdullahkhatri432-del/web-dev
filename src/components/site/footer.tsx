@@ -57,15 +57,18 @@ const columns = [
       { href: "/#how-it-works", label: "How it works" },
       { href: "/#packages", label: "Pricing" },
       { href: "/#testimonials", label: "Reviews" },
-      { href: "/admin", label: "Partner login" },
+      { href: "/about", label: "About us" },
+      { href: "/contact", label: "Contact" },
+      { href: "/faq", label: "FAQ" },
     ],
   },
   {
     title: "Legal",
     links: [
-      { href: "#", label: "Privacy policy" },
-      { href: "#", label: "Terms of service" },
-      { href: "#", label: "Refund policy" },
+      { href: "/privacy", label: "Privacy policy" },
+      { href: "/terms", label: "Terms of service" },
+      { href: "/refunds", label: "Refund policy" },
+      { href: "/signin", label: "Partner login" },
     ],
   },
 ]

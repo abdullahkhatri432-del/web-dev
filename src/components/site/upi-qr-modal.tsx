@@ -199,7 +199,7 @@ export function UpiQrModal({ open, onClose, amount, demo, addonPrices, subtotal,
           {saving ? "Saving…" : "I&apos;ve paid"}
         </Button>
       </div>
-      <p className="mt-3 text-xs text-zinc-600">
+      <p className="mt-3 text-xs text-zinc-500">
         After paying, tap &quot;I&apos;ve paid&quot; so we can verify your transfer.
       </p>
     </div>

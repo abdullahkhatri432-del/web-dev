@@ -1,140 +1,199 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import Link from "next/link"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
-import { Building, Calendar, Sun } from "lucide-react"
+import { IndianRupee, ShoppingCart, Loader2, AlertCircle } from "lucide-react"
+import { getAllOrders } from "@/services/firestore"
+import type { Order } from "@/services/firestore"
+
+function formatPrice(price: number) {
+  return price.toLocaleString("en-IN")
+}
+
+function statusBadge(status: string) {
+  const map: Record<string, string> = {
+    "pending payment": "bg-yellow-100 text-yellow-800",
+    paid: "bg-green-100 text-green-800",
+    "requirements pending": "bg-blue-100 text-blue-800",
+    "in progress": "bg-blue-100 text-blue-800",
+    delivered: "bg-green-100 text-green-800",
+    completed: "bg-emerald-100 text-emerald-800",
+    cancelled: "bg-red-100 text-red-800",
+  }
+  const cls = map[status] || "bg-zinc-100 text-zinc-800"
+  return (
+    <span className={`px-2 py-1 text-xs font-medium rounded-full ${cls}`}>
+      {status}
+    </span>
+  )
+}
+
+function toMillis(v: Date | unknown): number {
+  if (typeof v === "object" && v !== null && "toMillis" in (v as object)) {
+    return (v as { toMillis: () => number }).toMillis()
+  }
+  if (v instanceof Date) return v.getTime()
+  return 0
+}
+
+function toDate(v: Date | unknown): Date | null {
+  if (typeof v === "object" && v !== null && "toDate" in (v as object)) {
+    return (v as { toDate: () => Date }).toDate()
+  }
+  if (v instanceof Date) return v
+  return null
+}
 
 export default function AdminOverviewPage() {
+  const [orders, setOrders] = useState<Order[] | null>(null)
+  const [error, setError] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    getAllOrders()
+      .then((data) => {
+        if (!cancelled) setOrders(data)
+      })
+      .catch(() => {
+        if (!cancelled) setError(true)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const paidOrders = (orders || []).filter(
+    (o) => !["pending payment", "cancelled"].includes(o.orderStatus) && o.paymentStatus !== "pending"
+  )
+  const totalRevenue = paidOrders.reduce((sum, o) => sum + (o.total || 0), 0)
+  const activeOrders = (orders || []).filter(
+    (o) => !["completed", "cancelled", "pending payment"].includes(o.orderStatus)
+  )
+  const recent = (orders || [])
+    .slice()
+    .sort((a, b) => toMillis(b.createdAt) - toMillis(a.createdAt))
+    .slice(0, 8)
+
   return (
     <div className="p-6">
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        {/* Total Revenue Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Total Revenue</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-baseline gap-2">
-              <div>
-                <p className="text-3xl font-bold text-accent">₹4,52,399</p>
-                <p className="text-zinc-500">This Year</p>
-              </div>
-              <Sun className="h-6 w-6 text-yellow-500" />
-            </div>
-            <p className="text-zinc-500 mt-2">+12% from last quarter</p>
-          </CardContent>
-        </Card>
-
-        {/* Total Orders Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Total Orders</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-baseline gap-2">
-              <div>
-                <p className="text-3xl font-bold text-primary">1,247</p>
-                <p className="text-zinc-500">Total Orders</p>
-              </div>
-              <Building className="h-6 w-6 text-primary" />
-            </div>
-            <p className="text-zinc-500 mt-2">+8.5% from last month</p>
-          </CardContent>
-        </Card>
-
-        {/* Active Orders Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Active Orders</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-baseline gap-2">
-              <div>
-                <p className="text-3xl font-bold text-green-600">243</p>
-                <p className="text-zinc-500">In Progress</p>
-              </div>
-              <Calendar className="h-6 w-6 text-green-600" />
-            </div>
-            <p className="text-zinc-500 mt-2">Currently being built</p>
-          </CardContent>
-        </Card>
-
-      </div>
-
-      {/* Recent Orders Section */}
-      <div className="mt-8">
-        <h2 className="text-xl font-bold mb-4">Recent Orders</h2>
-        
-        <div className="overflow-x-auto">
-          <table className="min-w-full rounded-lg border-border">
-            <thead>
-              <tr className="border-b border-border">
-                <th className="p-3 text-left text-zinc-500 font-medium">Order #</th>
-                <th className="p-3 text-left text-zinc-500 font-medium">Customer</th>
-                <th className="p-3 text-left text-zinc-500 font-medium">Amount</th>
-                <th className="p-3 text-left text-zinc-500 font-medium">Status</th>
-                <th className="p-3 text-left text-zinc-500 font-medium">Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="border-b border-border hover:bg-primary/5 transition-colors">
-                <td className="p-3">OF-001</td>
-                <td className="p-3">Rajesh Kumar</td>
-                <td className="p-3">₹14,999</td>
-                <td className="p-3">
-                  <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded">Paid</span>
-                </td>
-                <td className="p-3">2 days ago</td>
-              </tr>
-              <tr className="border-b border-border hover:bg-primary/5 transition-colors">
-                <td className="p-3">OF-002</td>
-                <td className="p-3">Priya Singh</td>
-                <td className="p-3">₹7,999</td>
-                <td className="p-3">
-                  <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded">Pending Payment</span>
-                </td>
-                <td className="p-3">5 days ago</td>
-              </tr>
-              <tr className="border-b border-border hover:bg-primary/5 transition-colors">
-                <td className="p-3">OF-003</td>
-                <td className="p-3">Amit Patel</td>
-                <td className="p-3">₹29,999</td>
-                <td className="p-3">
-                  <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded">In Progress</span>
-                </td>
-                <td className="p-3">7 days ago</td>
-              </tr>
-            </tbody>
-          </table>
+      <div className="mb-6 flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+          <p className="mt-1 text-sm text-zinc-500">Live data from your Firestore orders</p>
         </div>
+        <Link
+          href="/websites"
+          className="text-sm font-medium text-amber-400 hover:underline"
+        >
+          View website →
+        </Link>
       </div>
 
-      {/* Conversion Rate Section */}
-      <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Conversion Rate</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center">
-              <p className="text-4xl font-bold text-accent">3.2%</p>
-              <p className="text-zinc-500">Visitor to Order</p>
-            </div>
-            <p className="text-zinc-500 mt-2">Industry average: 1.8%</p>
-          </CardContent>
-        </Card>
+      {error ? (
+        <div className="flex flex-col items-center rounded-2xl border border-white/5 bg-[#101014] py-16 text-center">
+          <AlertCircle className="h-8 w-8 text-red-400" />
+          <p className="mt-3 text-sm text-zinc-400">
+            Couldn&apos;t load orders from Firestore. Check that the backend env vars are set.
+          </p>
+        </div>
+      ) : orders === null ? (
+        <div className="flex flex-col items-center rounded-2xl border border-white/5 bg-[#101014] py-16 text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-amber-400" />
+          <p className="mt-3 text-sm text-zinc-500">Loading orders...</p>
+        </div>
+      ) : (
+        <>
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            <Card>
+              <CardHeader>
+                <CardTitle>Total Revenue</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-baseline gap-2">
+                  <div>
+                    <p className="text-3xl font-bold text-amber-400">₹{formatPrice(totalRevenue)}</p>
+                    <p className="text-zinc-500">From {paidOrders.length} paid orders</p>
+                  </div>
+                  <IndianRupee className="h-6 w-6 text-amber-500" />
+                </div>
+              </CardContent>
+            </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Average Order Value</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center">
-              <p className="text-4xl font-bold text-primary">₹18,499</p>
-              <p className="text-zinc-500">Per Order</p>
-            </div>
-            <p className="text-zinc-500 mt-2">Includes all packages</p>
-          </CardContent>
-        </Card>
-      </div>
+            <Card>
+              <CardHeader>
+                <CardTitle>Total Orders</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-baseline gap-2">
+                  <div>
+                    <p className="text-3xl font-bold text-white">{orders.length}</p>
+                    <p className="text-zinc-500">All-time orders</p>
+                  </div>
+                  <ShoppingCart className="h-6 w-6 text-white/60" />
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Active Orders</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-baseline gap-2">
+                  <div>
+                    <p className="text-3xl font-bold text-emerald-400">{activeOrders.length}</p>
+                    <p className="text-zinc-500">Currently being built</p>
+                  </div>
+                  <ShoppingCart className="h-6 w-6 text-emerald-500" />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="mt-8">
+            <h2 className="mb-4 text-xl font-bold text-white">
+              Recent Orders {orders.length === 0 && <span className="text-sm font-normal text-zinc-500">— none yet, orders will appear here</span>}
+            </h2>
+
+            {orders.length === 0 ? (
+              <div className="rounded-2xl border border-white/5 bg-[#101014] py-16 text-center">
+                <p className="text-zinc-500">No orders yet. Share your website link to start receiving orders.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto rounded-2xl border border-white/5 bg-[#101014]">
+                <table className="min-w-full">
+                  <thead>
+                    <tr className="border-b border-white/5 text-left">
+                      <th className="p-4 text-xs font-medium uppercase tracking-wider text-zinc-500">Order</th>
+                      <th className="p-4 text-xs font-medium uppercase tracking-wider text-zinc-500">Customer</th>
+                      <th className="p-4 text-xs font-medium uppercase tracking-wider text-zinc-500">Amount</th>
+                      <th className="p-4 text-xs font-medium uppercase tracking-wider text-zinc-500">Status</th>
+                      <th className="p-4 text-xs font-medium uppercase tracking-wider text-zinc-500">Date</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {recent.map((o) => {
+                      const d = toDate(o.createdAt)
+                      return (
+                        <tr key={o.id} className="border-b border-white/5 transition-colors hover:bg-white/[0.02]">
+                          <td className="p-4 text-sm text-zinc-300">{o.id.slice(-6).toUpperCase()}</td>
+                          <td className="p-4 text-sm text-white">{o.businessName || o.ownerName || "—"}</td>
+                          <td className="p-4 text-sm font-semibold text-amber-400">₹{formatPrice(o.total || 0)}</td>
+                          <td className="p-4">{statusBadge(o.orderStatus)}</td>
+                          <td className="p-4 text-sm text-zinc-500">
+                            {d ? d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—"}
+                          </td>
+                        </tr>
+                      )
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </>
+      )}
     </div>
   )
 }

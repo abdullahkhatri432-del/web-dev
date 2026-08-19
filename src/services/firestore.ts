@@ -9,7 +9,6 @@ import {
   query, 
   orderBy, 
   where, 
-  limit, 
   updateDoc,
   type Query,
   type QueryConstraint
@@ -162,6 +161,25 @@ export async function createUser(userData: {
   return userRef
 }
 
+export interface ContactMessage {
+  id: string
+  name: string
+  email: string
+  phone: string | null
+  subject: string | null
+  message: string
+  createdAt: Date
+}
+
+export async function createContactMessage(data: Omit<ContactMessage, "id" | "createdAt">) {
+  const messagesRef = collection(db, "contactMessages")
+  const docRef = await addDoc(messagesRef, {
+    ...data,
+    createdAt: new Date(),
+  })
+  return docRef.id
+}
+
 export async function getUser(userId: string) {
   const userRef = doc(db, "users", userId)
   const snap = await getDoc(userRef)
@@ -281,6 +299,12 @@ export async function getAddon(id: string) {
 }
 
 // Orders
+export async function getAllOrders() {
+  const ordersRef = collection(db, "orders")
+  const snap = await getDocs(ordersRef)
+  return snap.docs.map((doc) => ({ id: doc.id, ...doc.data() } as Order))
+}
+
 export async function createOrder(orderData: Order) {
   const ordersRef = collection(db, "orders")
   const docRef = await addDoc(ordersRef, {
@@ -385,7 +409,9 @@ export async function createTestimonial(testimonialData: Testimonial) {
 
 export async function getTestimonials(activeOnly = true) {
   const testimonialsRef = collection(db, "testimonials")
-  const q = query(testimonialsRef, where("active", "==", true))
+  const q = activeOnly
+    ? query(testimonialsRef, where("active", "==", true))
+    : query(testimonialsRef)
   const snap = await getDocs(q)
   return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Testimonial))
 }
