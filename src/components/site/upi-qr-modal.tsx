@@ -6,6 +6,7 @@ import { X, Copy, Check, QrCode, BadgeCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { createOrder } from "@/services/firestore"
 import type { Demo, Order } from "@/services/firestore"
+import { useAuth } from "@/hooks/useAuth"
 
 export const UPI_ID = "8160587811@kotak811"
 const UPI_NAME = "WebForge"
@@ -46,6 +47,8 @@ export function upiUri(amount: number) {
 }
 
 export function UpiQrModal({ open, onClose, amount, demo, addonPrices, subtotal, tax, formData }: UpiQrModalProps) {
+  const { user } = useAuth()
+  const userId = user?.uid ?? null
   const [qrSvg, setQrSvg] = useState<string | null>(null)
   const [copied, setCopied] = useState(false)
   const [submitted, setSubmitted] = useState(false)
@@ -98,7 +101,7 @@ export function UpiQrModal({ open, onClose, amount, demo, addonPrices, subtotal,
     try {
       const orderData: Order = {
         id: "",
-        userId: "guest",
+        userId: userId || "guest",
         demoId: demo?.id ?? "",
         packageId: formData.packageId,
         addons: formData.selectedAddons,

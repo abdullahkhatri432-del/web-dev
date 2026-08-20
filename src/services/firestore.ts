@@ -143,6 +143,7 @@ export interface Coupon {
 
 // Users collection
 export async function createUser(userData: {
+  uid?: string
   id?: string
   email: string | null
   displayName: string | null
@@ -151,14 +152,45 @@ export async function createUser(userData: {
   role: "customer" | "admin"
 }) {
   const usersRef = collection(db, "users")
-  const userRef = doc(usersRef, userData.email || userData.id || Date.now().toString())
-  
-  await setDoc(userRef, {
-    ...userData,
-    createdAt: new Date(),
-  })
-  
+  const id = userData.uid || userData.id || userData.email || userData.phone || Date.now().toString()
+  const userRef = doc(usersRef, id)
+
+  await setDoc(
+    userRef,
+    {
+      ...userData,
+      createdAt: new Date(),
+    },
+    { merge: true }
+  )
+
   return userRef
+}
+
+/**
+ * Resolve a Firebase auth user to their Firestore profile.
+ * Looks up by UID first, then phone, then email (legacy records).
+ */
+export async function getUserProfile(authUser: {
+  uid: string
+  email?: string | null
+  phoneNumber?: string | null
+  displayName?: string | null
+}): Promise<User | null> {
+  const byUid = await getDoc(doc(db, "users", authUser.uid)).catch(() => null)
+  if (byUid?.exists()) return { id: byUid.id, ...byUid.data() } as User
+
+  if (authUser.phoneNumber) {
+    const byPhone = await getUser(authUser.phoneNumber)
+    if (byPhone) return byPhone
+  }
+
+  if (authUser.email) {
+    const byEmail = await getUserByEmail(authUser.email)
+    if (byEmail) return byEmail
+  }
+
+  return null
 }
 
 export interface ContactMessage {
@@ -335,6 +367,47 @@ export async function updateOrder(id: string, data: Partial<Order>) {
   return getOrder(id)
 }
 
+const ORDER_STATUSES = [
+  "pending payment",
+  "paid",
+  "requirements pending",
+  "requirements received",
+  "in progress",
+  "design review",
+  "development",
+  "quality check",
+  "ready for delivery",
+  "delivered",
+  "revision requested",
+  "completed",
+  "cancelled",
+] as const
+
+export type OrderStatus = (typeof ORDER_STATUSES)[number]
+
+export const ORDER_STATUS_LIST: OrderStatus[] = [...ORDER_STATUSES]
+
+export async function updateOrderStatus(
+  id: string,
+  status: OrderStatus,
+  opts?: { note?: string; userId?: string }
+) {
+  const orderRef = doc(db, "orders", id)
+  await updateDoc(orderRef, {
+    orderStatus: status,
+    updatedAt: new Date(),
+  })
+  if (opts?.note?.trim()) {
+    await createOrderUpdate({
+      orderId: id,
+      status,
+      message: opts.note.trim(),
+      userId: opts.userId || "admin",
+    })
+  }
+  return getOrder(id)
+}
+
 export async function getUserOrders(userId: string, statusFilter?: string) {
   const ordersRef = collection(db, "orders")
   const q = query(ordersRef, where("userId", "==", userId))
@@ -381,7 +454,7 @@ export async function updatePaymentStatus(orderId: string, status: "pending" | "
 }
 
 // Order Updates
-export async function createOrderUpdate(updateData: OrderUpdate) {
+export async function createOrderUpdate(updateData: Omit<OrderUpdate, "id" | "createdAt">) {
   const updatesRef = collection(db, "orderUpdates")
   const docRef = await addDoc(updatesRef, {
     ...updateData,
@@ -390,11 +463,11 @@ export async function createOrderUpdate(updateData: OrderUpdate) {
   return docRef.id
 }
 
-export async function getOrderUpdates(orderId: string) {
+export async function getOrderUpdates(orderId: string): Promise<OrderUpdate[]> {
   const updatesRef = collection(db, "orderUpdates")
   const q = query(updatesRef, where("orderId", "==", orderId), orderBy("createdAt", "desc"))
   const snap = await getDocs(q)
-  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+  return snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as OrderUpdate)
 }
 
 // Testimonials

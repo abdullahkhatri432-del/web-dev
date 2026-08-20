@@ -23,25 +23,34 @@ const inputCls =
 
 export default function SignInPage() {
   const router = useRouter()
-  const { user, loading, signOut, signInWithGoogle } = useAuth()
+  const { user, profile, isAdmin, loading, signOut, signInWithGoogle, signInWithEmailAndPassword, registerWithEmailAndPassword, sendPasswordReset, sendVerificationEmail } = useAuth()
   const [mode, setMode] = useState<"login" | "signup">("login")
 
   const [phone, setPhone] = useState("")
   const [otp, setOtp] = useState("")
   const [sent, setSent] = useState(false)
   const [resendIn, setResendIn] = useState(0)
-  const [busy, setBusy] = useState<null | "send" | "verify" | "google">(null)
+  const [busy, setBusy] = useState<null | "send" | "verify" | "google" | "email" | "reset" | "verifymail">(null)
   const [error, setError] = useState<string | null>(null)
   const [userName, setUserName] = useState("")
   const [businessName, setBusinessName] = useState("")
 
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [emailMode, setEmailMode] = useState(false)
+  const [forgotMode, setForgotMode] = useState(false)
+  const [emailSent, setEmailSent] = useState(false)
+  const [verificationSent, setVerificationSent] = useState(false)
+
   const confirmationRef = useRef<ConfirmationResult | null>(null)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
 
-  // Redirect signed-in users to the dashboard
+  // Redirect signed-in users based on their role
   useEffect(() => {
-    if (user && !loading) router.push("/admin")
-  }, [user, loading, router])
+    if (user && !loading) {
+      router.push(isAdmin ? "/admin" : "/account")
+    }
+  }, [user, loading, isAdmin, router])
 
   useEffect(() => {
     return () => {
@@ -93,11 +102,12 @@ export default function SignInPage() {
       const uid = result.user.uid
       const ph = result.user.phoneNumber || `+91${phone.trim()}`
 
-      // Save / load the user profile in Firestore
-      const existing = await getUser(ph).catch(() => null)
+      // Save / load the user profile in Firestore (keyed by UID)
+      const existing = (await getUser(uid).catch(() => null)) || (await getUser(ph).catch(() => null))
       if (!existing) {
         await createUser({
-          id: ph,
+          uid,
+          id: uid,
           email: result.user.email || `${ph.replace(/\D/g, "")}@webforge.in`,
           displayName: userName.trim() || null,
           phone: ph,
@@ -107,7 +117,6 @@ export default function SignInPage() {
           // profile already created concurrently — fine
         })
       }
-      router.push("/admin")
     } catch (err) {
       setError("Incorrect OTP. Please check and try again.")
       console.error("verifyOtp error:", err)
@@ -132,6 +141,53 @@ export default function SignInPage() {
     setError(null)
   }
 
+  const handleEmailSubmit = async (e: FormEvent) => {
+    e.preventDefault()
+    if (!email || !password) return
+    setBusy("email")
+    setError(null)
+    try {
+      if (mode === "login") {
+        await signInWithEmailAndPassword(email, password)
+      } else {
+        await registerWithEmailAndPassword(email, password)
+      }
+    } catch {
+      setError(mode === "login" ? "Invalid email or password." : "Couldn't create the account. This email may already be registered.")
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  const handleForgot = async (e: FormEvent) => {
+    e.preventDefault()
+    if (!email) return
+    setBusy("reset")
+    setError(null)
+    setEmailSent(false)
+    try {
+      await sendPasswordReset(email)
+      setEmailSent(true)
+    } catch {
+      setError("We couldn't send a reset link. Check the email and try again.")
+    } finally {
+      setBusy(null)
+    }
+  }
+
+  const handleVerifyEmail = async () => {
+    setBusy("verifymail")
+    setVerificationSent(false)
+    try {
+      await sendVerificationEmail()
+      setVerificationSent(true)
+    } catch {
+      setError("Couldn't send the verification email. Try again.")
+    } finally {
+      setBusy(null)
+    }
+  }
+
   return (
     <main className="flex-1">
       <Navbar />
@@ -153,9 +209,31 @@ export default function SignInPage() {
               <p className="mt-2 text-sm text-zinc-500">
                 {user.displayName || "Welcome"} · {user.phoneNumber || user.email}
               </p>
+              {user.email && !user.emailVerified && (
+                <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-left text-xs text-amber-800">
+                  <p className="font-semibold">Email not verified</p>
+                  <p className="mt-0.5">Verify your email to keep your account secure.</p>
+                  <button
+                    onClick={handleVerifyEmail}
+                    disabled={busy !== null}
+                    className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-amber-600 disabled:opacity-50"
+                  >
+                    {busy === "verifymail" ? (
+                      <>
+                        <Loader2 className="h-3 w-3 animate-spin" /> Sending...
+                      </>
+                    ) : verificationSent ? (
+                      "Sent! Check your inbox"
+                    ) : (
+                      "Send verification email"
+                    )}
+                  </button>
+                  {error && <p className="mt-2 text-red-600">{error}</p>}
+                </div>
+              )}
               <Button asChild className="mt-6 w-full">
-                <Link href="/admin">
-                  Go to dashboard
+                <Link href={isAdmin ? "/admin" : "/account"}>
+                  Go to {isAdmin ? "dashboard" : "my account"}
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
@@ -323,7 +401,7 @@ export default function SignInPage() {
 
               <div className="my-6 flex items-center gap-3">
                 <div className="h-px flex-1 bg-zinc-200" />
-                <span className="text-xs text-zinc-500">or continue with</span>
+                <span className="text-xs text-zinc-500">or</span>
                 <div className="h-px flex-1 bg-zinc-200" />
               </div>
 
@@ -344,8 +422,111 @@ export default function SignInPage() {
                 disabled={busy !== null}
               >
                 <Mail className="mr-2 h-4 w-4" />
-                Continue with email / Google
+                Continue with Google
               </Button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setEmailMode((v) => !v)
+                  setForgotMode(false)
+                  setError(null)
+                }}
+                className="mt-3 w-full text-center text-sm font-medium text-amber-600 hover:underline"
+              >
+                {emailMode ? "← Use WhatsApp number instead" : "Use email & password instead"}
+              </button>
+
+              {emailMode && !forgotMode && (
+                <form onSubmit={handleEmailSubmit} className="mt-4 space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-zinc-700">Email</label>
+                    <input
+                      type="email"
+                      className={inputCls}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      autoComplete="email"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm font-medium text-zinc-700">Password</label>
+                      <button
+                        type="button"
+                        onClick={() => setForgotMode(true)}
+                        className="text-xs font-medium text-amber-600 hover:underline"
+                      >
+                        Forgot password?
+                      </button>
+                    </div>
+                    <input
+                      type="password"
+                      className={inputCls}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      placeholder="••••••••"
+                      autoComplete={mode === "login" ? "current-password" : "new-password"}
+                    />
+                  </div>
+                  {error && <p className="text-sm text-red-500">{error}</p>}
+                  <Button type="submit" className="w-full" size="lg" disabled={busy !== null || !email || password.length < 6}>
+                    {busy === "email" ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> {mode === "login" ? "Signing in..." : "Creating account..."}
+                      </>
+                    ) : (
+                      <>
+                        <Mail className="mr-2 h-4 w-4" />
+                        {mode === "login" ? "Log in with email" : "Create account with email"}
+                      </>
+                    )}
+                  </Button>
+                  <p className="text-center text-xs text-zinc-500">
+                    {mode === "signup" && "We'll send you a verification link after signup."}
+                  </p>
+                </form>
+              )}
+
+              {emailMode && forgotMode && (
+                <form onSubmit={handleForgot} className="mt-4 space-y-4">
+                  <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-800">
+                    Enter your email and we&apos;ll send you a password reset link.
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-zinc-700">Email</label>
+                    <input
+                      type="email"
+                      className={inputCls}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      autoComplete="email"
+                    />
+                  </div>
+                  {emailSent && (
+                    <p className="text-sm text-emerald-600">Reset link sent! Check your inbox (and spam).</p>
+                  )}
+                  {error && <p className="text-sm text-red-500">{error}</p>}
+                  <Button type="submit" className="w-full" disabled={busy !== null || !email}>
+                    {busy === "reset" ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Sending...
+                      </>
+                    ) : (
+                      "Send reset link"
+                    )}
+                  </Button>
+                  <button
+                    type="button"
+                    onClick={() => setForgotMode(false)}
+                    className="w-full text-center text-sm font-medium text-amber-600 hover:underline"
+                  >
+                    ← Back to sign in
+                  </button>
+                </form>
+              )}
             </div>
           )}
 

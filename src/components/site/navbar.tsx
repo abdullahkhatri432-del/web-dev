@@ -15,7 +15,7 @@ const links = [
 ]
 
 export function Navbar() {
-  const { user, loading } = useAuth()
+  const { user, isAdmin, loading } = useAuth()
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-zinc-100 bg-white/70 backdrop-blur-xl">
@@ -34,14 +34,19 @@ export function Navbar() {
         </nav>
         <div className="flex items-center gap-3">
           {!loading && user ? (
-            <Button asChild variant="ghost" size="sm">
-              <Link href="/admin">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-50 text-xs font-bold text-amber-600">
-                  {(user.displayName || user.email || "U").charAt(0).toUpperCase()}
-                </span>
-                <span className="ml-1.5 hidden sm:inline">Dashboard</span>
-              </Link>
-            </Button>
+            <>
+              <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
+                <Link href="/account">My orders</Link>
+              </Button>
+              <Button asChild variant="ghost" size="sm">
+                <Link href={isAdmin ? "/admin" : "/account"}>
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-50 text-xs font-bold text-amber-600">
+                    {(user.displayName || user.email || "U").charAt(0).toUpperCase()}
+                  </span>
+                  <span className="ml-1.5 hidden sm:inline">{isAdmin ? "Dashboard" : "Account"}</span>
+                </Link>
+              </Button>
+            </>
           ) : (
             <Button asChild variant="ghost" size="sm" className="hidden sm:inline-flex">
               <Link href="/signin">Sign in</Link>

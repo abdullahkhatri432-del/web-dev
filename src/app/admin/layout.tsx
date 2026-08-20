@@ -1,13 +1,15 @@
 "use client"
 
-import { ReactNode } from "react"
+import { ReactNode, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { LayoutDashboard, LogOut, Globe, ArrowLeft } from "lucide-react"
+import { LayoutDashboard, ListOrdered, LogOut, Globe, ArrowLeft, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/hooks/useAuth"
 
 const navItems = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
+  { href: "/admin/orders", label: "Orders", icon: ListOrdered },
 ]
 
 export default function AdminLayout({
@@ -15,7 +17,26 @@ export default function AdminLayout({
 }: {
   children: ReactNode
 }) {
-  const { user, signOut } = useAuth()
+  const router = useRouter()
+  const { user, profile, isAdmin, loading, signOut } = useAuth()
+
+  useEffect(() => {
+    if (loading) return
+    if (!user) {
+      router.replace("/signin")
+    } else if (!isAdmin) {
+      router.replace("/account")
+    }
+  }, [user, isAdmin, loading, router])
+
+  if (loading || !user || !isAdmin) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-amber-600" />
+        <span className="ml-3 text-sm text-zinc-500">Checking access...</span>
+      </div>
+    )
+  }
 
   return (
     <div className="flex h-screen">
@@ -41,8 +62,8 @@ export default function AdminLayout({
           </ul>
         </nav>
         <div className="border-t border-zinc-100 p-3">
-          {user && (
-            <p className="mb-2 truncate px-3 text-xs text-zinc-500">{user.email}</p>
+          {profile && (
+            <p className="mb-2 truncate px-3 text-xs text-zinc-500">{profile.email || profile.phone}</p>
           )}
           <Button asChild variant="ghost" size="sm" className="w-full justify-start">
             <Link href="/">
@@ -56,6 +77,7 @@ export default function AdminLayout({
             className="mt-1 w-full justify-start text-zinc-500 hover:text-zinc-900"
             onClick={async () => {
               await signOut()
+              router.replace("/signin")
             }}
           >
             <LogOut className="mr-2 h-4 w-4" />
@@ -70,7 +92,9 @@ export default function AdminLayout({
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back
           </Button>
-          <div className="text-sm text-zinc-500">Signed in as {user?.email || "guest"}</div>
+          <div className="text-sm text-zinc-500">
+            {isAdmin ? "Admin" : "Signed in"} · {profile?.email || profile?.phone || "user"}
+          </div>
         </nav>
         {children}
       </div>
