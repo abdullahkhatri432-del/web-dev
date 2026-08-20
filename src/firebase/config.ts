@@ -16,22 +16,17 @@ import { getAuth, GoogleAuthProvider } from "firebase/auth"
 import { getFirestore } from "firebase/firestore"
 import { getStorage } from "firebase/storage"
 
-// Validate required environment variables
-const requiredEnvs = [
-  "NEXT_PUBLIC_FIREBASE_API_KEY",
-  "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN",
-  "NEXT_PUBLIC_FIREBASE_PROJECT_ID",
-  "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET",
-  "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID",
-  "NEXT_PUBLIC_FIREBASE_APP_ID",
-]
+// Validate required environment variables (static access so Next.js inlines them client-side)
+const configured =
+  Boolean(process.env.NEXT_PUBLIC_FIREBASE_API_KEY) &&
+  Boolean(process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN) &&
+  Boolean(process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) &&
+  Boolean(process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET) &&
+  Boolean(process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID) &&
+  Boolean(process.env.NEXT_PUBLIC_FIREBASE_APP_ID)
 
-const configured = requiredEnvs.every((env) => Boolean(process.env[env]))
-
-for (const env of requiredEnvs) {
-  if (!process.env[env]) {
-    console.warn(`Missing Firebase env var: ${env}`)
-  }
+if (!configured) {
+  console.warn("Missing Firebase env vars — running with placeholder (demo) config")
 }
 
 const firebaseConfig = {

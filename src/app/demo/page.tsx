@@ -105,8 +105,8 @@ function DemoContent() {
               See your website <span className="text-gradient-amber">in 3D</span>
             </h1>
             <p className="mt-4 text-lg text-zinc-500">
-              Rotate the template, add your business name, and imagine it live on your own domain.
-              This is exactly what you&apos;ll get.
+              See your template come alive with 3D animations styled for your industry.
+              Add your business name and imagine it live on your own domain.
             </p>
           </div>
 

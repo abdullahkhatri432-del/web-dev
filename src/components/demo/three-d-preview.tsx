@@ -1,10 +1,11 @@
 "use client"
 
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { ArrowLeft, ArrowRight, MousePointer2 } from "lucide-react"
+import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react"
 import type { Demo, Package } from "@/services/firestore"
+import { ThreeDScene } from "./three-d-scene"
 
 type Props = {
   demo: Demo
@@ -18,65 +19,29 @@ const PKG_FALLBACK: Record<string, { name: string; price: number }> = {
   pro: { name: "Pro", price: 29999 },
 }
 
+const SCENE_LABELS: Record<string, string> = {
+  restaurant: "Fine dining",
+  cafe: "Café",
+  gym: "Fitness",
+  salon: "Beauty & salon",
+  clinic: "Healthcare",
+  "real-estate": "Real estate",
+  hotel: "Hotels",
+  portfolio: "Portfolio",
+  agency: "Creative agency",
+  saas: "SaaS & tech",
+  ecommerce: "Ecommerce",
+  education: "Education",
+  photography: "Photography",
+  "local-business": "Local business",
+}
+
 export function ThreeDPreview({ demo, allDemos, packages }: Props) {
   const router = useRouter()
   const [businessName, setBusinessName] = useState("")
   const [pkgId, setPkgId] = useState<string>("business")
-  const [rotateX, setRotateX] = useState(10)
-  const [rotateY, setRotateY] = useState(-8)
-  const [dragging, setDragging] = useState(false)
-  const dragRef = useRef<{ x: number; y: number; rx: number; ry: number } | null>(null)
-  const rafRef = useRef<number | null>(null)
 
   const domain = (businessName.trim() || "your-business").toLowerCase().replace(/\s+/g, "-") + ".com"
-
-  const startIdle = useCallback(() => {
-    if (rafRef.current) return
-    let t = 0
-    const tick = () => {
-      t += 0.008
-      if (!dragRef.current) {
-        setRotateX(10 + Math.sin(t * 1.4) * 4)
-        setRotateY(-8 + Math.sin(t) * 10)
-      }
-      rafRef.current = requestAnimationFrame(tick)
-    }
-    rafRef.current = requestAnimationFrame(tick)
-  }, [])
-
-  useEffect(() => {
-    startIdle()
-    return () => {
-      if (rafRef.current) cancelAnimationFrame(rafRef.current)
-    }
-  }, [startIdle])
-
-  useEffect(() => {
-    if (!dragging) return
-    const onMove = (e: PointerEvent) => {
-      const d = dragRef.current
-      if (!d) return
-      const dx = e.clientX - d.x
-      const dy = e.clientY - d.y
-      setRotateY(Math.max(-38, Math.min(38, d.ry + dx * 0.25)))
-      setRotateX(Math.max(-6, Math.min(24, d.rx - dy * 0.15)))
-    }
-    const onUp = () => {
-      dragRef.current = null
-      setDragging(false)
-    }
-    window.addEventListener("pointermove", onMove)
-    window.addEventListener("pointerup", onUp)
-    return () => {
-      window.removeEventListener("pointermove", onMove)
-      window.removeEventListener("pointerup", onUp)
-    }
-  }, [dragging])
-
-  const onPointerDown = (e: React.PointerEvent) => {
-    dragRef.current = { x: e.clientX, y: e.clientY, rx: rotateX, ry: rotateY }
-    setDragging(true)
-  }
 
   const idx = allDemos.findIndex((d) => d.id === demo.id)
   const go = (step: number) => {
@@ -87,19 +52,16 @@ export function ThreeDPreview({ demo, allDemos, packages }: Props) {
   return (
     <div className="relative">
       {/* Stage */}
-      <div className="relative flex items-center justify-center py-10" style={{ perspective: "1600px" }}>
+      <div className="relative flex items-center justify-center overflow-visible py-16" style={{ perspective: "1600px" }}>
+        <ThreeDScene category={demo.category} />
+
+        {/* 3D card */}
         <div
-          className="relative select-none"
-          style={{
-            transformStyle: "preserve-3d",
-            transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
-            transition: dragging ? "none" : "transform 0.15s ease-out",
-            cursor: dragging ? "grabbing" : "grab",
-          }}
-          onPointerDown={onPointerDown}
+          className="relative select-none animate-demo-tilt"
+          style={{ zIndex: 10, transformStyle: "preserve-3d" }}
         >
           {/* Browser window */}
-          <div className="w-[min(880px,88vw)] overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-[0_50px_100px_-20px_rgba(24,24,27,0.35)]">
+          <div className="w-[min(720px,86vw)] overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-[0_50px_100px_-20px_rgba(24,24,27,0.35)]">
             <div className="flex items-center gap-2 border-b border-zinc-200 bg-zinc-50 px-4 py-3">
               <span className="h-3 w-3 rounded-full bg-red-400" />
               <span className="h-3 w-3 rounded-full bg-yellow-400" />
@@ -120,8 +82,8 @@ export function ThreeDPreview({ demo, allDemos, packages }: Props) {
 
           {/* Floor reflection */}
           <div
-            className="pointer-events-none absolute left-0 right-0 top-full mt-3 overflow-hidden"
-            style={{ transform: "rotateX(180deg)", opacity: 0.18 }}
+            className="pointer-events-none absolute left-0 right-0 top-full mt-4 overflow-hidden"
+            style={{ transform: "rotateX(180deg)", opacity: 0.16 }}
           >
             <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white">
               <div className="flex items-center gap-2 border-b border-zinc-200 bg-zinc-50 px-4 py-3">
@@ -137,10 +99,10 @@ export function ThreeDPreview({ demo, allDemos, packages }: Props) {
         </div>
       </div>
 
-      {/* Drag hint */}
-      <div className="pointer-events-none absolute bottom-4 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full border border-zinc-200 bg-white/90 px-4 py-1.5 text-xs text-zinc-500 shadow-sm">
-        <MousePointer2 className="h-3.5 w-3.5" />
-        Drag to rotate in 3D
+      {/* Scene label */}
+      <div className="pointer-events-none absolute top-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full border border-amber-200 bg-white/90 px-4 py-1.5 text-xs text-amber-700 shadow-sm backdrop-blur">
+        <Sparkles className="h-3.5 w-3.5" />
+        {SCENE_LABELS[demo.category] ?? demo.category} · 3D animated preview
       </div>
 
       {/* Name overlay card */}

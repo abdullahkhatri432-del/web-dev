@@ -155,3 +155,111 @@
 .animate-pulse-soft {
   animation: pulse-soft 3s ease-in-out infinite;
 }
+
+/* ---- 3D demo scenes ---- */
+@keyframes demo-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-6deg);
+  }
+  50% {
+    transform: translateY(-24px) rotate(6deg);
+  }
+}
+
+@keyframes demo-orbit {
+  from {
+    transform: rotate(0deg) translateX(var(--orbit-r, 420px));
+  }
+  to {
+    transform: rotate(360deg) translateX(var(--orbit-r, 420px));
+  }
+}
+
+@keyframes demo-spin3d {
+  from {
+    transform: rotateY(0deg);
+  }
+  to {
+    transform: rotateY(360deg);
+  }
+}
+
+@keyframes demo-ring {
+  0% {
+    transform: scale(0.25);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+
+@keyframes demo-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+}
+
+@keyframes demo-rise {
+  0% {
+    transform: translateY(0) scale(0.8);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translateY(-110px) scale(1.05);
+    opacity: 0;
+  }
+}
+
+@keyframes demo-tilt {
+  0% {
+    transform: rotateX(8deg) rotateY(-10deg);
+  }
+  50% {
+    transform: rotateX(11deg) rotateY(-2deg);
+  }
+  100% {
+    transform: rotateX(7deg) rotateY(-13deg);
+  }
+}
+
+.animate-demo-float {
+  animation: demo-float 6s ease-in-out infinite;
+}
+
+.animate-demo-orbit {
+  animation: demo-orbit 20s linear infinite;
+}
+
+.animate-demo-spin3d {
+  animation: demo-spin3d 9s linear infinite;
+  transform-style: preserve-3d;
+}
+
+.animate-demo-ring {
+  animation: demo-ring 3.6s ease-out infinite;
+}
+
+.animate-demo-pulse {
+  animation: demo-pulse 2.6s ease-in-out infinite;
+}
+
+.animate-demo-rise {
+  animation: demo-rise 4.5s ease-in infinite;
+}
+
+.animate-demo-tilt {
+  animation: demo-tilt 16s ease-in-out infinite;
+  transform-style: preserve-3d;
+}
