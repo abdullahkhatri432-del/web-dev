@@ -86,8 +86,15 @@ export default function SignInPage() {
         })
       }, 1000)
     } catch (err) {
-      setError("Couldn't send the OTP. Check the number and try again. (Make sure Phone sign-in is enabled in Firebase.)")
-      console.error("sendOtp error:", err)
+      const code = (err as { code?: string }).code
+      const msg =
+        code === "auth/quota-exceeded"
+          ? "Too many OTP requests. Wait a few minutes and try again."
+          : code === "auth/invalid-phone-number"
+            ? "That phone number isn't valid. Check it and try again."
+            : "Couldn't send the OTP. If it hangs, try refreshing and checking that Phone sign-in is enabled in Firebase."
+      setError(msg)
+      console.error("sendOtp error:", code || err)
     } finally {
       setBusy(null)
     }
@@ -530,8 +537,9 @@ export default function SignInPage() {
             </div>
           )}
 
-          {/* reCAPTCHA target for Firebase phone auth */}
-          <div id="recaptcha-container" className="sr-only" />
+          {/* reCAPTCHA target for Firebase phone auth. Keep it a plain, unclipped div —
+              clipping/hiding it makes the invisible challenge unsolvable and the OTP hangs. */}
+          <div id="recaptcha-container" />
         </div>
       </section>
 
