@@ -1,8 +1,9 @@
 "use client"
 
-import { useEffect, useState, type FormEvent } from "react"
+import { useEffect, useRef, useState, type FormEvent, type MouseEvent } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion"
 import {
   ArrowRight,
   Search,
@@ -35,6 +36,10 @@ import { demos as seedDemos, demoCategories as seedCategories } from "@/seed/dem
 import { Button } from "@/components/ui/button"
 import { Navbar } from "@/components/site/navbar"
 import { Footer } from "@/components/site/footer"
+import { Reveal } from "@/components/site/reveal"
+import { TiltCard } from "@/components/site/tilt-card"
+import { Counter } from "@/components/site/counter"
+import { Cube3D } from "@/components/site/cube-3d"
 
 const categoryIcons: Record<string, typeof Utensils> = {
   restaurant: Utensils,
@@ -138,16 +143,42 @@ export default function HomePage() {
 
   const heroDemo = demos.find((d) => d.featured) ?? demos[0]
 
+  const mx = useMotionValue(0)
+  const my = useMotionValue(0)
+  const smx = useSpring(mx, { stiffness: 55, damping: 16 })
+  const smy = useSpring(my, { stiffness: 55, damping: 16 })
+  const rotX = useTransform(smy, [-0.5, 0.5], [8, -8])
+  const rotY = useTransform(smx, [-0.5, 0.5], [-12, 12])
+  const orbX = useTransform(smx, (v) => v * -36)
+  const orbY = useTransform(smy, (v) => v * -24)
+  const heroRef = useRef<HTMLElement>(null)
+
+  const onHeroMove = (e: MouseEvent<HTMLElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    mx.set((e.clientX - rect.left) / rect.width - 0.5)
+    my.set((e.clientY - rect.top) / rect.height - 0.5)
+  }
+
+  const onHeroLeave = () => {
+    mx.set(0)
+    my.set(0)
+  }
+
   return (
     <main className="flex-1">
       <Navbar />
 
       {/* ============ HERO ============ */}
-      <section className="relative overflow-hidden pb-20 pt-36">
+      <section
+        ref={heroRef}
+        onMouseMove={onHeroMove}
+        onMouseLeave={onHeroLeave}
+        className="relative overflow-hidden pb-20 pt-36"
+      >
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute left-1/2 top-0 h-[500px] w-[900px] -translate-x-1/2 rounded-full bg-amber-100 blur-[120px]" />
+          <motion.div style={{ x: orbX, y: orbY }} className="absolute left-1/2 top-0 h-[500px] w-[900px] -translate-x-1/2 rounded-full bg-amber-100 blur-[120px]" />
           <div className="absolute -right-40 top-40 h-96 w-96 rounded-full bg-amber-100 blur-[100px]" />
-          <div className="absolute -left-40 top-80 h-96 w-96 rounded-full bg-amber-50 blur-[100px]" />
+          <motion.div style={{ x: orbX, y: orbY }} className="absolute -left-40 top-80 h-96 w-96 rounded-full bg-amber-50 blur-[100px]" />
         </div>
 
         <div className="relative mx-auto max-w-7xl px-6">
@@ -187,55 +218,70 @@ export default function HomePage() {
 
             <div className="animate-fade-in-up mx-auto mt-10 flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
               {[
-                { value: "250+", label: "websites shipped" },
-                { value: "4.9/5", label: "average rating" },
-                { value: "3 days", label: "avg. turnaround" },
+                { value: 250, suffix: "+", label: "websites shipped", decimals: 0 },
+                { value: 4.9, suffix: "/5", label: "average rating", decimals: 1 },
+                { value: 3, suffix: " days", label: "avg. turnaround", decimals: 0 },
               ].map((s) => (
                 <div key={s.label} className="text-center">
-                  <div className="text-2xl font-bold text-zinc-900">{s.value}</div>
+                  <div className="text-2xl font-bold text-zinc-900">
+                    <Counter value={s.value} suffix={s.suffix} decimals={s.decimals} />
+                  </div>
                   <div className="mt-1 text-xs text-zinc-500">{s.label}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Browser mockup */}
-          <div className="animate-fade-in-up relative mx-auto mt-16 max-w-4xl" style={{ animationDelay: "0.15s" }}>
-            <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-xl">
-              <div className="flex items-center gap-2 border-b border-zinc-100 bg-zinc-100 px-4 py-3">
-                <span className="h-3 w-3 rounded-full bg-red-500/70" />
-                <span className="h-3 w-3 rounded-full bg-yellow-500/70" />
-                <span className="h-3 w-3 rounded-full bg-green-500/70" />
-                <div className="mx-auto flex h-7 w-full max-w-sm items-center justify-center rounded-lg bg-zinc-50 text-[11px] text-zinc-500">
-                  khatribuilds.app/preview/{heroDemo?.slug ?? "premium-gym"}
+          {/* Browser mockup — 3D mouse tilt */}
+          <div
+            className="animate-fade-in-up relative mx-auto mt-16 max-w-4xl"
+            style={{ animationDelay: "0.15s", perspective: "1600px" }}
+          >
+            <Cube3D
+              size={130}
+              className="pointer-events-none absolute -left-8 top-6 z-10 hidden animate-float lg:block"
+            />
+            <motion.div style={{ rotateX: rotX, rotateY: rotY, transformStyle: "preserve-3d" }}>
+              <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-xl">
+                <div className="flex items-center gap-2 border-b border-zinc-100 bg-zinc-100 px-4 py-3">
+                  <span className="h-3 w-3 rounded-full bg-red-500/70" />
+                  <span className="h-3 w-3 rounded-full bg-yellow-500/70" />
+                  <span className="h-3 w-3 rounded-full bg-green-500/70" />
+                  <div className="mx-auto flex h-7 w-full max-w-sm items-center justify-center rounded-lg bg-zinc-50 text-[11px] text-zinc-500">
+                    khatribuilds.app/preview/{heroDemo?.slug ?? "premium-gym"}
+                  </div>
+                </div>
+                <img
+                  src={heroDemo?.thumbnail ?? "/demos/gym-premium.svg"}
+                  alt={heroDemo?.name ?? "Website preview"}
+                  className="h-[420px] w-full object-cover md:h-[520px]"
+                />
+              </div>
+
+              <div className="absolute -left-4 top-24 hidden lg:block" style={{ transform: "translateZ(80px)" }}>
+                <div className="animate-float rounded-2xl border border-zinc-200 bg-white/95 px-5 py-4 shadow-card backdrop-blur">
+                  <div className="text-xs text-zinc-500">Starting at</div>
+                  <div className="mt-1 text-2xl font-bold text-zinc-900">
+                    ₹{formatPrice(heroDemo?.price ?? 7999)}
+                  </div>
+                  <div className="mt-1 text-xs text-emerald-400">Included + tax</div>
                 </div>
               </div>
-              <img
-                src={heroDemo?.thumbnail ?? "/demos/gym-premium.svg"}
-                alt={heroDemo?.name ?? "Website preview"}
-                className="h-[420px] w-full object-cover md:h-[520px]"
-              />
-            </div>
 
-            <div className="animate-float absolute -left-4 top-24 hidden rounded-2xl border border-zinc-200 bg-white/95 px-5 py-4 shadow-card backdrop-blur lg:block">
-              <div className="text-xs text-zinc-500">Starting at</div>
-              <div className="mt-1 text-2xl font-bold text-zinc-900">
-                ₹{formatPrice(heroDemo?.price ?? 7999)}
-              </div>
-              <div className="mt-1 text-xs text-emerald-400">Included + tax</div>
-            </div>
-
-            <div className="animate-float absolute -right-6 bottom-16 hidden rounded-2xl border border-zinc-200 bg-white/95 px-5 py-4 shadow-card backdrop-blur lg:block" style={{ animationDelay: "1.5s" }}>
-              <div className="flex items-center gap-2">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-50 text-amber-600">
-                  <Zap className="h-4 w-4" />
-                </span>
-                <div>
-                  <div className="text-sm font-semibold text-zinc-900">Delivery in 5 days</div>
-                  <div className="text-xs text-zinc-500">Design + content included</div>
+              <div className="absolute -right-6 bottom-16 hidden lg:block" style={{ transform: "translateZ(60px)" }}>
+                <div className="animate-float rounded-2xl border border-zinc-200 bg-white/95 px-5 py-4 shadow-card backdrop-blur" style={{ animationDelay: "1.5s" }}>
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-50 text-amber-600">
+                      <Zap className="h-4 w-4" />
+                    </span>
+                    <div>
+                      <div className="text-sm font-semibold text-zinc-900">Delivery in 5 days</div>
+                      <div className="text-xs text-zinc-500">Design + content included</div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -303,34 +349,37 @@ export default function HomePage() {
           </div>
 
           <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {(selectedCategory ? filteredDemos : featured).map((demo) => (
-              <Link
-                key={demo.id}
-                href={`/websites/${demo.slug}`}
-                className="group overflow-hidden rounded-2xl border border-zinc-100 bg-white transition-all duration-300 hover:-translate-y-1 hover:border-amber-200 "
-              >
-                <div className="relative aspect-[8/5] overflow-hidden">
-                  <img
-                    src={demo.thumbnail}
-                    alt={demo.name}
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute left-3 top-3 rounded-full border border-white/20 bg-black/60 px-3 py-1 text-xs font-medium text-white backdrop-blur">
-                    {demo.category}
-                  </div>
-                </div>
-                <div className="p-5">
-                  <h3 className="font-semibold text-zinc-900">{demo.name}</h3>
-                  <p className="mt-1 line-clamp-2 text-sm text-zinc-500">{demo.description}</p>
-                  <div className="mt-4 flex items-center justify-between">
-                    <span className="text-lg font-bold text-amber-600">₹{formatPrice(demo.price)}</span>
-                    <span className="flex items-center gap-1 text-xs font-medium text-amber-600 opacity-0 transition-opacity group-hover:opacity-100">
-                      Customise
-                      <ArrowRight className="h-3.5 w-3.5" />
-                    </span>
-                  </div>
-                </div>
-              </Link>
+            {(selectedCategory ? filteredDemos : featured).map((demo, i) => (
+              <Reveal key={demo.id} delay={(i % 4) * 0.07} className="h-full">
+                <TiltCard maxTilt={7} className="relative h-full rounded-2xl">
+                  <Link
+                    href={`/websites/${demo.slug}`}
+                    className="group block h-full overflow-hidden rounded-2xl border border-zinc-100 bg-white transition-colors duration-300 hover:border-amber-200"
+                  >
+                    <div className="relative aspect-[8/5] overflow-hidden">
+                      <img
+                        src={demo.thumbnail}
+                        alt={demo.name}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute left-3 top-3 rounded-full border border-white/20 bg-black/60 px-3 py-1 text-xs font-medium text-white backdrop-blur">
+                        {demo.category}
+                      </div>
+                    </div>
+                    <div className="p-5">
+                      <h3 className="font-semibold text-zinc-900">{demo.name}</h3>
+                      <p className="mt-1 line-clamp-2 text-sm text-zinc-500">{demo.description}</p>
+                      <div className="mt-4 flex items-center justify-between">
+                        <span className="text-lg font-bold text-amber-600">₹{formatPrice(demo.price)}</span>
+                        <span className="flex items-center gap-1 text-xs font-medium text-amber-600 opacity-0 transition-opacity group-hover:opacity-100">
+                          Customise
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                </TiltCard>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -339,7 +388,7 @@ export default function HomePage() {
       {/* ============ HOW IT WORKS ============ */}
       <section id="how-it-works" className="relative border-y border-zinc-100 bg-zinc-50 py-24">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="mx-auto max-w-2xl text-center">
+          <Reveal className="mx-auto max-w-2xl text-center">
             <div className="text-xs font-semibold uppercase tracking-widest text-amber-600">Process</div>
             <h2 className="mt-3 text-4xl font-bold tracking-tight text-zinc-900 md:text-5xl">
               From template to live website in 5 days
@@ -347,7 +396,7 @@ export default function HomePage() {
             <p className="mt-4 text-zinc-500">
               A dead-simple process. You do the easy parts, we do the heavy lifting.
             </p>
-          </div>
+          </Reveal>
 
           <div className="mt-16 grid gap-6 md:grid-cols-4">
             {[
@@ -376,20 +425,21 @@ export default function HomePage() {
                 desc: "Pay securely online and get your finished website in days.",
               },
             ].map((s, i) => (
-              <div
-                key={s.step}
-                className="group relative rounded-2xl border border-zinc-100 bg-white p-7 transition-all duration-300 hover:border-amber-200"
-              >
-                <div className="text-xs font-semibold text-zinc-500">Step {s.step}</div>
-                <div className="mt-4 flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-600 transition-colors group-hover:bg-amber-400 group-hover:text-zinc-900">
-                  <s.icon className="h-5 w-5" />
-                </div>
-                <h3 className="mt-5 text-lg font-semibold text-zinc-900">{s.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-zinc-500">{s.desc}</p>
-                {i < 3 && (
-                  <div className="absolute -right-4 top-1/2 hidden h-px w-8 bg-gradient-to-r from-amber-400/40 to-transparent md:block" />
-                )}
-              </div>
+              <Reveal key={s.step} delay={i * 0.09} className="h-full">
+                <TiltCard maxTilt={6} className="relative h-full rounded-2xl">
+                  <div className="group relative h-full rounded-2xl border border-zinc-100 bg-white p-7 transition-colors duration-300 hover:border-amber-200">
+                    <div className="text-xs font-semibold text-zinc-500">Step {s.step}</div>
+                    <div className="mt-4 flex h-11 w-11 items-center justify-center rounded-xl bg-amber-50 text-amber-600 transition-colors group-hover:bg-amber-400 group-hover:text-zinc-900">
+                      <s.icon className="h-5 w-5" />
+                    </div>
+                    <h3 className="mt-5 text-lg font-semibold text-zinc-900">{s.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-zinc-500">{s.desc}</p>
+                    {i < 3 && (
+                      <div className="absolute -right-4 top-1/2 hidden h-px w-8 bg-gradient-to-r from-amber-400/40 to-transparent md:block" />
+                    )}
+                  </div>
+                </TiltCard>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -398,7 +448,7 @@ export default function HomePage() {
       {/* ============ INDUSTRIES ============ */}
       <section className="py-24">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="mx-auto max-w-2xl text-center">
+          <Reveal className="mx-auto max-w-2xl text-center">
             <div className="text-xs font-semibold uppercase tracking-widest text-amber-600">Industries</div>
             <h2 className="mt-3 text-4xl font-bold tracking-tight text-zinc-900 md:text-5xl">
               Built for your kind of business
@@ -406,24 +456,27 @@ export default function HomePage() {
             <p className="mt-4 text-zinc-500">
               From restaurants to SaaS — templates designed for your industry&apos;s customers.
             </p>
-          </div>
+          </Reveal>
 
           <div className="mt-14 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-            {seedCategories.map((c) => {
+            {seedCategories.map((c, i) => {
               const Icon = categoryIcons[c.id] ?? Store
               const count = demos.filter((d) => d.category === c.id).length
               return (
-                <Link
-                  key={c.id}
-                  href={`/websites?category=${c.id}`}
-                  className="group rounded-2xl border border-zinc-100 bg-white p-6 transition-all duration-300 hover:-translate-y-0.5 hover:border-amber-200"
-                >
-                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-zinc-50 text-zinc-500 transition-colors group-hover:bg-amber-50 group-hover:text-amber-600">
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <h3 className="mt-4 font-semibold text-zinc-900">{c.name}</h3>
-                  <p className="mt-1 text-xs text-zinc-500">{count} template{count === 1 ? "" : "s"}</p>
-                </Link>
+                <Reveal key={c.id} delay={(i % 4) * 0.06} className="h-full">
+                  <TiltCard maxTilt={5} className="relative h-full rounded-2xl">
+                    <Link
+                      href={`/websites?category=${c.id}`}
+                      className="group block h-full rounded-2xl border border-zinc-100 bg-white p-6 transition-colors duration-300 hover:border-amber-200"
+                    >
+                      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-zinc-50 text-zinc-500 transition-colors group-hover:bg-amber-50 group-hover:text-amber-600">
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <h3 className="mt-4 font-semibold text-zinc-900">{c.name}</h3>
+                      <p className="mt-1 text-xs text-zinc-500">{count} template{count === 1 ? "" : "s"}</p>
+                    </Link>
+                  </TiltCard>
+                </Reveal>
               )
             })}
           </div>
@@ -433,7 +486,7 @@ export default function HomePage() {
       {/* ============ PRICING ============ */}
       <section id="packages" className="relative border-y border-zinc-100 bg-zinc-50 py-24">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="mx-auto max-w-2xl text-center">
+          <Reveal className="mx-auto max-w-2xl text-center">
             <div className="text-xs font-semibold uppercase tracking-widest text-amber-600">Pricing</div>
             <h2 className="mt-3 text-4xl font-bold tracking-tight text-zinc-900 md:text-5xl">
               One price. Nothing hidden.
@@ -442,44 +495,47 @@ export default function HomePage() {
               Every package includes the template, customisation, and your content. Pay online via
               UPI QR — securely, once, and done.
             </p>
-          </div>
+          </Reveal>
 
           <div className="mt-14 grid gap-6 lg:grid-cols-3">
-            {packages.map((p) => (
-              <div
-                key={p.id}
-                className={`relative flex flex-col rounded-2xl border p-8 transition-all duration-300 ${
-                  p.popular
-                    ? "border-amber-300 bg-white shadow-lg"
-                    : "border-zinc-100 bg-white hover:border-zinc-300"
-                }`}
-              >
-                {p.popular && (
-                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-amber-gradient px-4 py-1 text-xs font-bold text-zinc-900">
-                    Most popular
+            {packages.map((p, i) => (
+              <Reveal key={p.id} delay={i * 0.1} className="h-full">
+                <TiltCard maxTilt={4} className="relative h-full rounded-2xl">
+                  <div
+                    className={`relative flex h-full flex-col rounded-2xl border p-8 transition-colors duration-300 ${
+                      p.popular
+                        ? "border-amber-300 bg-white shadow-lg"
+                        : "border-zinc-100 bg-white hover:border-zinc-300"
+                    }`}
+                  >
+                    {p.popular && (
+                      <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-amber-gradient px-4 py-1 text-xs font-bold text-zinc-900">
+                        Most popular
+                      </div>
+                    )}
+                    <h3 className="text-lg font-semibold text-zinc-900">{p.name}</h3>
+                    <p className="mt-1 text-sm text-zinc-500">{p.tagline}</p>
+                    <div className="mt-6 flex items-baseline gap-1">
+                      <span className="text-4xl font-bold text-zinc-900">{p.price}</span>
+                      <span className="text-sm text-zinc-500">one-time</span>
+                    </div>
+                    <ul className="mt-8 space-y-3">
+                      {p.features.map((f) => (
+                        <li key={f} className="flex items-start gap-3 text-sm text-zinc-700">
+                          <Check className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+                          {f}
+                        </li>
+                      ))}
+                    </ul>
+                    <Button asChild className="mt-8 w-full" variant={p.popular ? "default" : "outline"}>
+                      <Link href={`/checkout?package=${p.id}`}>
+                        {p.popular ? "Get started" : "Choose plan"}
+                        <ArrowRight className="ml-2 h-4 w-4" />
+                      </Link>
+                    </Button>
                   </div>
-                )}
-                <h3 className="text-lg font-semibold text-zinc-900">{p.name}</h3>
-                <p className="mt-1 text-sm text-zinc-500">{p.tagline}</p>
-                <div className="mt-6 flex items-baseline gap-1">
-                  <span className="text-4xl font-bold text-zinc-900">{p.price}</span>
-                  <span className="text-sm text-zinc-500">one-time</span>
-                </div>
-                <ul className="mt-8 space-y-3">
-                  {p.features.map((f) => (
-                    <li key={f} className="flex items-start gap-3 text-sm text-zinc-700">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <Button asChild className="mt-8 w-full" variant={p.popular ? "default" : "outline"}>
-                  <Link href={`/checkout?package=${p.id}`}>
-                    {p.popular ? "Get started" : "Choose plan"}
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              </div>
+                </TiltCard>
+              </Reveal>
             ))}
           </div>
 
@@ -500,19 +556,19 @@ export default function HomePage() {
       {/* ============ TESTIMONIALS ============ */}
       <section id="testimonials" className="py-24">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="mx-auto max-w-2xl text-center">
+          <Reveal className="mx-auto max-w-2xl text-center">
             <div className="text-xs font-semibold uppercase tracking-widest text-amber-600">Reviews</div>
             <h2 className="mt-3 text-4xl font-bold tracking-tight text-zinc-900 md:text-5xl">
               Businesses love their new websites
             </h2>
-          </div>
+          </Reveal>
 
           <div className="mt-14 grid gap-6 md:grid-cols-3">
-            {testimonials.map((t) => (
-              <div
-                key={t.name}
-                className="flex flex-col rounded-2xl border border-zinc-100 bg-white p-7"
-              >
+            {testimonials.map((t, i) => (
+              <Reveal key={t.name} delay={i * 0.1} className="h-full">
+                <div
+                  className="flex h-full flex-col rounded-2xl border border-zinc-100 bg-white p-7 transition-transform duration-300 hover:-translate-y-1"
+                >
                 <Quote className="h-6 w-6 text-amber-500" />
                 <p className="mt-4 flex-1 text-sm leading-relaxed text-zinc-700">{t.quote}</p>
                 <div className="mt-6 flex items-center gap-3">
@@ -529,7 +585,8 @@ export default function HomePage() {
                     <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-600" />
                   ))}
                 </div>
-              </div>
+                </div>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -541,24 +598,30 @@ export default function HomePage() {
           <div className="relative overflow-hidden rounded-3xl border border-amber-200 bg-gradient-to-br from-amber-50 via-white to-white px-8 py-16 text-center md:px-16">
             <div className="pointer-events-none absolute -left-20 -top-20 h-64 w-64 rounded-full bg-amber-100 blur-[90px]" />
             <div className="pointer-events-none absolute -bottom-20 -right-20 h-64 w-64 rounded-full bg-amber-100 blur-[90px]" />
-            <h2 className="relative text-4xl font-bold tracking-tight text-zinc-900 md:text-5xl">
-              Ready to get online?
-            </h2>
-            <p className="relative mx-auto mt-4 max-w-xl text-zinc-500">
-              Browse templates, customise your package, and go live within days. No meetings, no
-              quotes, no nonsense.
-            </p>
-            <div className="relative mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <Button asChild size="lg">
-                <Link href="/websites">
-                  Browse templates
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline">
-                <Link href="/#how-it-works">How it works</Link>
-              </Button>
-            </div>
+            <Cube3D
+              size={110}
+              className="pointer-events-none absolute -left-6 bottom-6 hidden animate-float lg:block"
+            />
+            <Reveal>
+              <h2 className="relative text-4xl font-bold tracking-tight text-zinc-900 md:text-5xl">
+                Ready to get online?
+              </h2>
+              <p className="relative mx-auto mt-4 max-w-xl text-zinc-500">
+                Browse templates, customise your package, and go live within days. No meetings, no
+                quotes, no nonsense.
+              </p>
+              <div className="relative mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+                <Button asChild size="lg">
+                  <Link href="/websites">
+                    Browse templates
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button asChild size="lg" variant="outline">
+                  <Link href="/#how-it-works">How it works</Link>
+                </Button>
+              </div>
+            </Reveal>
           </div>
         </div>
       </section>

@@ -1,6 +1,8 @@
 import "./globals.css"
 import { Geist, Geist_Mono } from "next/font/google"
 import { ReactNode } from "react"
+import { ScrollProgress } from "@/components/site/scroll-progress"
+import { BackToTop } from "@/components/site/back-to-top"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,7 +30,9 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
+        <ScrollProgress />
         {children}
+        <BackToTop />
       </body>
     </html>
   )

@@ -6,6 +6,7 @@ import Link from "next/link"
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react"
 import type { Demo, Package } from "@/services/firestore"
 import { SiteMockup } from "./site-mockups"
+import { TiltCard } from "@/components/site/tilt-card"
 
 type Props = {
   demo: Demo
@@ -55,9 +56,10 @@ export function ThreeDPreview({ demo, allDemos, packages }: Props) {
       <div className="relative flex items-center justify-center overflow-visible py-14" style={{ perspective: "1600px" }}>
 
         {/* 3D card */}
-        <div
-          className="relative select-none animate-demo-tilt"
-          style={{ zIndex: 10, transformStyle: "preserve-3d" }}
+        <TiltCard
+          maxTilt={7}
+          className="relative select-none"
+          style={{ zIndex: 10 }}
         >
           {/* Browser window */}
           <div className="w-[min(720px,86vw)] overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-[0_50px_100px_-20px_rgba(24,24,27,0.35)]">
@@ -81,7 +83,7 @@ export function ThreeDPreview({ demo, allDemos, packages }: Props) {
           >
             <div className="h-[360px] w-full bg-gradient-to-b from-zinc-200 to-transparent sm:h-[440px]" />
           </div>
-        </div>
+        </TiltCard>
       </div>
 
       {/* Scroll hint */}
