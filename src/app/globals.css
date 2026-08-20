@@ -263,3 +263,44 @@
   animation: demo-tilt 16s ease-in-out infinite;
   transform-style: preserve-3d;
 }
+
+@keyframes demo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes demo-rock {
+  0%,
+  100% {
+    transform: rotateY(-16deg);
+  }
+  50% {
+    transform: rotateY(16deg);
+  }
+}
+
+@keyframes demo-ecg {
+  from {
+    stroke-dashoffset: 520;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-demo-spin {
+  animation: demo-spin 9s linear infinite;
+}
+
+.animate-demo-rock {
+  animation: demo-rock 8s ease-in-out infinite;
+  transform-style: preserve-3d;
+}
+
+.animate-demo-ecg {
+  animation: demo-ecg 1.9s linear infinite;
+}

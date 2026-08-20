@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { ArrowLeft, ArrowRight, Sparkles } from "lucide-react"
 import type { Demo, Package } from "@/services/firestore"
-import { ThreeDScene } from "./three-d-scene"
+import { SiteMockup } from "./site-mockups"
 
 type Props = {
   demo: Demo
@@ -52,8 +52,7 @@ export function ThreeDPreview({ demo, allDemos, packages }: Props) {
   return (
     <div className="relative">
       {/* Stage */}
-      <div className="relative flex items-center justify-center overflow-visible py-16" style={{ perspective: "1600px" }}>
-        <ThreeDScene category={demo.category} />
+      <div className="relative flex items-center justify-center overflow-visible py-14" style={{ perspective: "1600px" }}>
 
         {/* 3D card */}
         <div
@@ -70,39 +69,25 @@ export function ThreeDPreview({ demo, allDemos, packages }: Props) {
                 <span className="truncate">{domain}</span>
               </div>
             </div>
-            <div className="relative aspect-[16/10] bg-zinc-100">
-              <img src={demo.thumbnail} alt={demo.name} className="h-full w-full object-cover" draggable={false} />
-              {businessName.trim() && (
-                <div className="absolute left-4 top-4 rounded-lg bg-black/55 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur">
-                  {businessName.trim()}
-                </div>
-              )}
+            <div className="relative h-[360px] bg-white sm:h-[440px]">
+              <SiteMockup category={demo.category} name={businessName.trim() || demo.name} />
             </div>
           </div>
 
           {/* Floor reflection */}
           <div
-            className="pointer-events-none absolute left-0 right-0 top-full mt-4 overflow-hidden"
-            style={{ transform: "rotateX(180deg)", opacity: 0.16 }}
+            className="pointer-events-none absolute left-0 right-0 top-full mt-4 overflow-hidden rounded-xl"
+            style={{ transform: "rotateX(180deg)", opacity: 0.14, maskImage: "linear-gradient(to bottom, black 40%, transparent 90%)" }}
           >
-            <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white">
-              <div className="flex items-center gap-2 border-b border-zinc-200 bg-zinc-50 px-4 py-3">
-                <span className="h-3 w-3 rounded-full bg-red-400" />
-                <span className="h-3 w-3 rounded-full bg-yellow-400" />
-                <span className="h-3 w-3 rounded-full bg-green-400" />
-              </div>
-              <div className="aspect-[16/10] bg-zinc-100">
-                <img src={demo.thumbnail} alt="" className="h-full w-full object-cover opacity-70" draggable={false} />
-              </div>
-            </div>
+            <div className="h-[360px] w-full bg-gradient-to-b from-zinc-200 to-transparent sm:h-[440px]" />
           </div>
         </div>
       </div>
 
-      {/* Scene label */}
+      {/* Scroll hint */}
       <div className="pointer-events-none absolute top-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-2 rounded-full border border-amber-200 bg-white/90 px-4 py-1.5 text-xs text-amber-700 shadow-sm backdrop-blur">
         <Sparkles className="h-3.5 w-3.5" />
-        {SCENE_LABELS[demo.category] ?? demo.category} · 3D animated preview
+        {SCENE_LABELS[demo.category] ?? demo.category} · scroll the 3D preview
       </div>
 
       {/* Name overlay card */}
