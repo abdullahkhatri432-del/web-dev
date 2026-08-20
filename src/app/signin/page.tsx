@@ -195,6 +195,7 @@ export default function SignInPage() {
                         <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" />
                         <input
                           type="text"
+                          required
                           className={`${inputCls} pl-10`}
                           value={name}
                           onChange={(e) => setName(e.target.value)}
@@ -248,7 +249,7 @@ export default function SignInPage() {
                     type="submit"
                     className="w-full"
                     size="lg"
-                    disabled={busy !== null || !email || password.length < 6}
+                    disabled={busy !== null || !email || password.length < 6 || (mode === "signup" && !name.trim())}
                   >
                     {busy === "email" ? (
                       <>

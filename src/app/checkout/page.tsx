@@ -280,54 +280,79 @@ function CheckoutContent() {
               </div>
             )}
 
-            {step === 4 && (
-              <div>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {(
-                    [
-                      ["businessName", "Business name"],
-                      ["ownerName", "Owner name"],
-                      ["email", "Email"],
-                      ["phone", "Phone"],
-                      ["whatsapp", "WhatsApp"],
-                      ["businessAddress", "Business address"],
-                    ] as Array<[keyof FormData, string]>
-                  ).map(([key, label]) => (
-                    <div key={key}>
-                      <label className="text-sm font-medium text-zinc-700">{label}</label>
-                      <input
-                        type="text"
-                        className={inputCls}
-                        value={String(formData[key] ?? "")}
-                        onChange={(e) => setFormData((prev) => ({ ...prev, [key]: e.target.value }))}
-                      />
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-6 flex justify-between">
-                  <Button variant="outline" onClick={prevStep}>
-                    <ArrowLeft className="mr-2 h-4 w-4" /> Back
-                  </Button>
-                  <Button onClick={() => onBizSubmit({})}>
-                    Continue to Review
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            )}
+{step === 4 && (
+  <form
+    onSubmit={(e) => {
+      e.preventDefault()
+      onBizSubmit({})
+    }}
+  >
+    <div className="grid gap-4 sm:grid-cols-2">
+      {(
+        [
+          ["businessName", "Business name"],
+          ["ownerName", "Owner name"],
+          ["email", "Email"],
+          ["phone", "Phone"],
+          ["whatsapp", "WhatsApp"],
+          ["businessAddress", "Business address"],
+        ] as Array<[keyof FormData, string]>
+      ).map(([key, label]) => {
+        const required = ["businessName", "ownerName", "email", "phone"].includes(key)
+        const type = key === "email" ? "email" : key === "phone" || key === "whatsapp" ? "tel" : "text"
+        return (
+          <div key={key}>
+            <label className="text-sm font-medium text-zinc-700">
+              {label}
+              {required && <span className="text-amber-600"> *</span>}
+            </label>
+            <input
+              type={type}
+              required={required}
+              className={inputCls}
+              value={String(formData[key] ?? "")}
+              onChange={(e) => setFormData((prev) => ({ ...prev, [key]: e.target.value }))}
+            />
+          </div>
+        )
+      })}
+    </div>
+    <p className="mt-3 text-xs text-zinc-500">
+      <span className="text-amber-600">*</span> Required — we need these to build your site and reach you.
+    </p>
+    <div className="mt-6 flex justify-between">
+      <Button variant="outline" onClick={prevStep}>
+        <ArrowLeft className="mr-2 h-4 w-4" /> Back
+      </Button>
+      <Button type="submit">
+        Continue to Review
+        <ArrowRight className="ml-2 h-4 w-4" />
+      </Button>
+    </div>
+  </form>
+)}
 
-            {step === 5 && (
-              <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
-                <div className="space-y-6">
-                  <div>
-                    <h3 className="font-semibold text-zinc-900">What does your business do?</h3>
-                    <textarea
-                      className={`${inputCls} min-h-[100px]`}
-                      placeholder="e.g. We run a family restaurant in Jaipur and want to accept table reservations..."
-                      value={formData.businessDescription}
-                      onChange={(e) => setFormData((prev) => ({ ...prev, businessDescription: e.target.value }))}
-                    />
-                  </div>
+{step === 5 && (
+  <form
+    onSubmit={(e) => {
+      e.preventDefault()
+      setShowUpi(true)
+    }}
+  >
+    <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
+      <div className="space-y-6">
+        <div>
+          <h3 className="font-semibold text-zinc-900">
+            What does your business do? <span className="text-amber-600">*</span>
+          </h3>
+          <textarea
+            required
+            className={`${inputCls} min-h-[100px]`}
+            placeholder="e.g. We run a family restaurant in Jaipur and want to accept table reservations..."
+            value={formData.businessDescription}
+            onChange={(e) => setFormData((prev) => ({ ...prev, businessDescription: e.target.value }))}
+          />
+        </div>
                   <div>
                     <h3 className="font-semibold text-zinc-900">Websites you like (URLs)</h3>
                     <input
@@ -384,7 +409,7 @@ function CheckoutContent() {
                       </div>
                     </div>
                   </dl>
-                  <Button className="mt-6 w-full" size="lg" onClick={() => setShowUpi(true)}>
+<Button type="submit" className="mt-6 w-full" size="lg">
                     <QrCode className="mr-2 h-4 w-4" />
                     Pay ₹{formatPrice(total)} via UPI
                   </Button>
@@ -397,7 +422,8 @@ function CheckoutContent() {
                   </p>
                 </div>
               </div>
-            )}
+            </form>
+          )}
           </div>
         </div>
       </section>
