@@ -8,7 +8,7 @@ const sections = [
   {
     title: "1. Services",
     body: [
-      "WebForge provides productized website design and development services. When you place an order, you are purchasing a website package (Starter, Business or Pro), optional add-ons, and the customisation of a selected template for your business.",
+      "Khatri Builds provides productized website design and development services. When you place an order, you are purchasing a website package (Starter, Business or Pro), optional add-ons, and the customisation of a selected template for your business.",
     ],
   },
   {
@@ -64,7 +64,7 @@ const sections = [
   {
     title: "10. Contact",
     body: [
-      "For any questions about these terms, contact us at hello@webforge.in or via WhatsApp at +91 81605 87811.",
+      "For any questions about these terms, contact us at hello@khatribuilds.in or via WhatsApp at +91 81605 87811.",
     ],
   },
 ]

@@ -19,7 +19,7 @@ const cases = [
   },
   {
     title: "How to request a refund",
-    body: "Email hello@webforge.in or message us on WhatsApp at +91 81605 87811 with your order details (name, email, order reference and the UPI transaction ID). We'll verify and process eligible refunds within 5–7 business days.",
+    body: "Email hello@khatribuilds.in or message us on WhatsApp at +91 81605 87811 with your order details (name, email, order reference and the UPI transaction ID). We'll verify and process eligible refunds within 5–7 business days.",
   },
 ]
 

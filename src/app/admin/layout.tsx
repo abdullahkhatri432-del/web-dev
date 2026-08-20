@@ -43,7 +43,7 @@ export default function AdminLayout({
       <aside className="flex w-64 flex-col border-r border-zinc-100 bg-zinc-50">
         <div className="border-b border-zinc-100 p-6">
           <Link href="/" className="text-lg font-bold text-zinc-900">
-            WebForge <span className="text-amber-600">Admin</span>
+            Khatri Builds <span className="text-amber-600">Admin</span>
           </Link>
         </div>
         <nav className="flex-1 overflow-y-auto p-2">

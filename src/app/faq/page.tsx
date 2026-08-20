@@ -9,7 +9,7 @@ import { ChevronDown, ArrowRight, MessageCircle } from "lucide-react"
 
 const faqs = [
   {
-    q: "How does WebForge work?",
+    q: "How does Khatri Builds work?",
     a: "You pick a ready-made template, choose a package (Starter, Business or Pro), add any add-ons you need, and tell us about your business in one simple form. We build and launch your website — usually within 3–5 days.",
   },
   {
@@ -69,7 +69,7 @@ export default function FaqPage() {
               Frequently asked questions
             </h1>
             <p className="mx-auto mt-4 max-w-xl text-zinc-500">
-              Everything you need to know about getting a website with WebForge. Can&apos;t find your
+              Everything you need to know about getting a website with Khatri Builds. Can&apos;t find your
               answer? Message us and we&apos;ll help.
             </p>
           </div>

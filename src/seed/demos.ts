@@ -37,7 +37,7 @@ export const demos: Demo[] = [
       "Mobile ordering",
     ],
     tags: ["food", "reservation", "menu", "local"],
-    livePreviewUrl: "https://bistro-modern.webforge.example",
+    livePreviewUrl: "https://bistro-modern.khatribuilds.example",
     featured: true,
   },
   {
@@ -59,7 +59,7 @@ export const demos: Demo[] = [
       "Workout tracking",
     ],
     tags: ["fitness", "membership", "classes", "pricing"],
-    livePreviewUrl: "https://premium-gym.webforge.example",
+    livePreviewUrl: "https://premium-gym.khatribuilds.example",
     featured: true,
   },
   {
@@ -81,7 +81,7 @@ export const demos: Demo[] = [
       "Instagram feed",
     ],
     tags: ["beauty", "appointment", "styling", "editorial"],
-    livePreviewUrl: "https://luxury-salon.webforge.example",
+    livePreviewUrl: "https://luxury-salon.khatribuilds.example",
   },
   {
     id: "clinic-trust",
@@ -102,7 +102,7 @@ export const demos: Demo[] = [
       "Patient testimonials",
     ],
     tags: ["healthcare", "appointment", "medical", "trust"],
-    livePreviewUrl: "https://medical-clinic.webforge.example",
+    livePreviewUrl: "https://medical-clinic.khatribuilds.example",
   },
   {
     id: "real-estate-modern",
@@ -123,7 +123,7 @@ export const demos: Demo[] = [
       "Agent contact",
     ],
     tags: ["property", "listings", "search", "investment"],
-    livePreviewUrl: "https://modern-real-estate.webforge.example",
+    livePreviewUrl: "https://modern-real-estate.khatribuilds.example",
   },
   {
     id: "hotel-ocean",

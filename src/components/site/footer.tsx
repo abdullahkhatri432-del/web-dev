@@ -124,7 +124,7 @@ export function Footer() {
         </div>
       </div>
       <div className="border-t border-zinc-100 py-6 text-center text-xs text-zinc-500">
-        © {new Date().getFullYear()} WebForge · Crafted with care in India
+        © {new Date().getFullYear()} Khatri Builds · Crafted with care in India
       </div>
     </footer>
   )

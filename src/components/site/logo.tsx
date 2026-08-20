@@ -12,7 +12,7 @@ export function Logo({ className }: { className?: string }) {
           <path d="M13 10V3L4 14h7v7l9-11h-7z" />
         </svg>
       </span>
-      <span className="text-lg font-bold tracking-tight text-zinc-900">WebForge</span>
+      <span className="text-lg font-bold tracking-tight text-zinc-900">Khatri Builds</span>
     </Link>
   )
 }

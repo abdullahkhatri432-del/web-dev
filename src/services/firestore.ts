@@ -341,7 +341,7 @@ export async function getAllOrders() {
 
 export async function createOrder(orderData: Order) {
   const docRef = doc(collection(db, "orders"))
-  const reference = orderData.reference || `WF-${docRef.id.slice(0, 8).toUpperCase()}`
+  const reference = orderData.reference || `KB-${docRef.id.slice(0, 8).toUpperCase()}`
   await setDoc(docRef, {
     ...orderData,
     reference,

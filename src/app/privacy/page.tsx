@@ -52,7 +52,7 @@ const sections = [
   {
     title: "8. Contact us",
     body: [
-      "For any privacy questions, contact us at hello@webforge.in or via WhatsApp at +91 81605 87811.",
+      "For any privacy questions, contact us at hello@khatribuilds.in or via WhatsApp at +91 81605 87811.",
     ],
   },
 ]

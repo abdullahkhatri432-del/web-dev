@@ -609,7 +609,7 @@ function Features({ c }: { c: MockContent }) {
 function MockFooter() {
   return (
     <footer className="border-t border-zinc-200 bg-zinc-50 px-5 py-3 text-center text-[9px] text-zinc-400">
-      © 2026 · Made with WebForge
+      © 2026 · Made with Khatri Builds
     </footer>
   )
 }

@@ -101,7 +101,7 @@ export default function WebsiteDetailPage() {
                 <span className="h-3 w-3 rounded-full bg-yellow-500/70" />
                 <span className="h-3 w-3 rounded-full bg-green-500/70" />
                 <div className="mx-auto flex h-7 w-full max-w-xs items-center justify-center rounded-lg bg-zinc-50 text-[11px] text-zinc-500">
-                  webforge.app/preview/{demo.slug}
+                  khatribuilds.app/preview/{demo.slug}
                 </div>
               </div>
               <img src={demo.thumbnail} alt={demo.name} className="h-full w-full object-cover" />

@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/useAuth"
 import Link from "next/link"
 
 export const UPI_ID = "8160587811@kotak811"
-const UPI_NAME = "WebForge"
+const UPI_NAME = "Khatri Builds"
 
 const PKG_LABELS: Record<string, string> = {
   starter: "Starter Package",
@@ -48,7 +48,7 @@ export function upiUri(amount: number) {
     pn: UPI_NAME,
     cu: "INR",
     am: String(amount),
-    tn: "WebForge order",
+    tn: "Khatri Builds order",
   })
   return `upi://pay?${params.toString()}`
 }
@@ -57,7 +57,7 @@ function genReference() {
   const chars = "ABCDEFGHJKMNPQRSTUVWXYZ23456789"
   let s = ""
   for (let i = 0; i < 8; i++) s += chars[Math.floor(Math.random() * chars.length)]
-  return `WF-${s}`
+  return `KB-${s}`
 }
 
 export function UpiQrModal({ open, onClose, amount, demo, addonPrices, subtotal, tax, formData }: UpiQrModalProps) {
@@ -222,10 +222,10 @@ export function UpiQrModal({ open, onClose, amount, demo, addonPrices, subtotal,
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500 text-sm font-extrabold text-white">
-            WF
+KB
           </div>
           <div>
-            <p className="text-sm font-bold text-zinc-900">WebForge</p>
+            <p className="text-sm font-bold text-zinc-900">Khatri Builds</p>
             <p className="flex items-center gap-1 text-xs text-zinc-500">
               <Lock className="h-3 w-3 text-emerald-500" />
               Secure UPI payment
@@ -291,7 +291,7 @@ export function UpiQrModal({ open, onClose, amount, demo, addonPrices, subtotal,
         </div>
         <div className="flex-1">
           <p className="text-sm font-semibold text-zinc-900">
-            Payee: WebForge <span className="text-xs font-normal text-emerald-600">· Verified UPI merchant</span>
+            Payee: Khatri Builds <span className="text-xs font-normal text-emerald-600">· Verified UPI merchant</span>
           </p>
           <p className="text-xs text-zinc-500">
             Please pay exactly <span className="font-semibold text-zinc-900">₹{amount.toLocaleString("en-IN")}</span> to:

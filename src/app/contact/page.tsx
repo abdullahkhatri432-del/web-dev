@@ -148,7 +148,7 @@ export default function ContactPage() {
                     <div className="text-xs text-zinc-500">For documents &amp; details</div>
                   </div>
                 </div>
-                <p className="mt-3 text-sm text-zinc-500">hello@webforge.in</p>
+                <p className="mt-3 text-sm text-zinc-500">hello@khatribuilds.in</p>
               </div>
 
               <div className="rounded-2xl border border-zinc-100 bg-white p-6">

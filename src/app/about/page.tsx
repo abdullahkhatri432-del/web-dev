@@ -51,12 +51,12 @@ export default function AboutPage() {
           <div className="absolute left-1/2 top-0 h-[400px] w-[800px] -translate-x-1/2 rounded-full bg-amber-100 blur-[120px]" />
         </div>
         <div className="relative mx-auto max-w-3xl px-6 text-center">
-          <div className="text-xs font-semibold uppercase tracking-widest text-amber-600">About WebForge</div>
+          <div className="text-xs font-semibold uppercase tracking-widest text-amber-600">About Khatri Builds</div>
           <h1 className="mt-4 text-4xl font-bold tracking-tight text-zinc-900 md:text-6xl">
             Your business online, <span className="text-gradient-amber">without endless meetings.</span>
           </h1>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-zinc-500">
-            WebForge is a productized web-development service. Instead of quoting, waiting, and
+            Khatri Builds is a productized web-development service. Instead of quoting, waiting, and
             going back-and-forth, you choose a professionally designed template, pick a package,
             and we build your website — fast, at a fixed price.
           </p>
@@ -83,7 +83,7 @@ export default function AboutPage() {
       <section className="py-24">
         <div className="mx-auto max-w-6xl px-6">
           <div className="mx-auto max-w-2xl text-center">
-            <div className="text-xs font-semibold uppercase tracking-widest text-amber-600">Why WebForge</div>
+            <div className="text-xs font-semibold uppercase tracking-widest text-amber-600">Why Khatri Builds</div>
             <h2 className="mt-3 text-4xl font-bold tracking-tight text-zinc-900 md:text-5xl">What we believe</h2>
           </div>
           <div className="mt-14 grid gap-6 md:grid-cols-2">

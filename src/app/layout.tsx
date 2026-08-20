@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata = {
-  title: "WebForge - Your Website. Picked, Paid, Built.",
+  title: "Khatri Builds - Your Website. Picked, Paid, Built.",
   description: "Productized web-development marketplace. Choose a design, customize your package, and get your business online without endless meetings.",
 }
 
