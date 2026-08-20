@@ -26,6 +26,11 @@ export default function ContactPage() {
         subject: form.subject || null,
         message: form.message,
       })
+      fetch("/api/contact-notify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      }).catch(() => {})
       setStatus("done")
     } catch {
       setStatus("error")
