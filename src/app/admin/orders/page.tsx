@@ -94,7 +94,7 @@ function OrderRow({ order }: { order: Order }) {
         className="flex w-full flex-wrap items-center gap-3 p-4 text-left transition-colors hover:bg-zinc-50"
       >
         <div className="min-w-[90px]">
-          <div className="font-mono text-xs font-bold text-zinc-700">#{order.id.slice(-6).toUpperCase()}</div>
+          <div className="font-mono text-xs font-bold text-zinc-700">{order.reference || `#${order.id.slice(-6).toUpperCase()}`}</div>
           <div className="text-[11px] text-zinc-400">{d ? d.toLocaleString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "—"}</div>
         </div>
         <div className="min-w-[140px] flex-1">

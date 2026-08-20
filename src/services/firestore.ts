@@ -58,6 +58,7 @@ export interface Addon {
 
 export interface Order {
   id: string
+  reference: string
   userId: string
   demoId: string
   packageId: "starter" | "business" | "pro"
@@ -96,6 +97,7 @@ export interface Order {
   razorpayOrderId: string | null
   razorpayPaymentId: string | null
   razorpaySignature: string | null
+  upiTransactionId?: string | null
 }
 
 export interface Payment {
@@ -338,9 +340,11 @@ export async function getAllOrders() {
 }
 
 export async function createOrder(orderData: Order) {
-  const ordersRef = collection(db, "orders")
-  const docRef = await addDoc(ordersRef, {
+  const docRef = doc(collection(db, "orders"))
+  const reference = orderData.reference || `WF-${docRef.id.slice(0, 8).toUpperCase()}`
+  await setDoc(docRef, {
     ...orderData,
+    reference,
     createdAt: new Date(),
     updatedAt: new Date(),
   })
