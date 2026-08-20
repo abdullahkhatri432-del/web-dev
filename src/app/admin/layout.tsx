@@ -3,13 +3,14 @@
 import { ReactNode, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { LayoutDashboard, ListOrdered, LogOut, Globe, ArrowLeft, Loader2 } from "lucide-react"
+import { LayoutDashboard, ListOrdered, LogOut, Globe, ArrowLeft, Loader2, MessageSquare } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/hooks/useAuth"
 
 const navItems = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/orders", label: "Orders", icon: ListOrdered },
+  { href: "/admin/messages", label: "Messages", icon: MessageSquare },
 ]
 
 export default function AdminLayout({

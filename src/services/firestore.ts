@@ -214,6 +214,13 @@ export async function createContactMessage(data: Omit<ContactMessage, "id" | "cr
   return docRef.id
 }
 
+export async function getAllContactMessages(): Promise<ContactMessage[]> {
+  const messagesRef = collection(db, "contactMessages")
+  const q = query(messagesRef, orderBy("createdAt", "desc"))
+  const snap = await getDocs(q)
+  return snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }) as ContactMessage)
+}
+
 export async function getUser(userId: string) {
   const userRef = doc(db, "users", userId)
   const snap = await getDoc(userRef)
