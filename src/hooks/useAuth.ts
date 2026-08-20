@@ -8,6 +8,7 @@ import {
   createUserWithEmailAndPassword,
   sendPasswordResetEmail,
   sendEmailVerification,
+  updateProfile,
   signOut as firebaseSignOut,
   type User,
 } from "firebase/auth"
@@ -83,8 +84,11 @@ export function useAuth() {
     return await signInWithEmailAndPassword(auth, email, password)
   }
 
-  const registerWithEmailAndPassword = async (email: string, password: string) => {
+  const registerWithEmailAndPassword = async (email: string, password: string, displayName?: string) => {
     const result = await createUserWithEmailAndPassword(auth, email, password)
+    if (displayName) {
+      await updateProfile(result.user, { displayName }).catch(() => {})
+    }
     await upsertProfile(result.user).catch(() => {})
     setProfile(await getUserProfile(result.user).catch(() => null) ?? null)
     return result
